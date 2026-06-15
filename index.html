@@ -532,25 +532,42 @@
   <p data-en>Whether you're a farmer, food company, investor, or researcher — we'd love to hear from you.</p>
   <p data-ro>Fie că ești agricultor, companie alimentară, investitor sau cercetător — ne bucurăm să te auzim.</p>
 
-  <div class="contact-form">
+  <form class="contact-form" action="https://formspree.io/f/xpqebpar" method="POST" id="contact-form">
     <div class="form-group">
       <label data-en>I AM A...</label>
       <label data-ro>SUNT UN/O...</label>
-      <select>
-        <option data-en>Farmer</option><option data-ro>Agricultor</option>
-        <option data-en>Food Company</option><option data-ro>Companie Alimentară</option>
-        <option data-en>Energy Company</option><option data-ro>Companie Energetică</option>
-        <option data-en>Investor</option><option data-ro>Investitor</option>
-        <option data-en>Researcher</option><option data-ro>Cercetător</option>
-        <option data-en>Other</option><option data-ro>Altul</option>
+      <select name="role">
+        <option>Farmer / Agricultor</option>
+        <option>Food Company / Companie Alimentară</option>
+        <option>Energy Company / Companie Energetică</option>
+        <option>Investor / Investitor</option>
+        <option>Researcher / Cercetător</option>
+        <option>Other / Altul</option>
       </select>
     </div>
-    <input type="text" placeholder="Name / Nume">
-    <input type="email" placeholder="Email">
-    <textarea placeholder="Message / Mesaj"></textarea>
-    <button class="calc-btn" data-en>Send Message →</button>
-    <button class="calc-btn" data-ro>Trimite Mesaj →</button>
-  </div>
+    <input type="text" name="name" placeholder="Name / Nume" required>
+    <input type="email" name="email" placeholder="Email" required>
+    <textarea name="message" placeholder="Message / Mesaj" required></textarea>
+    <div id="form-success" style="display:none; color:var(--green); font-weight:700; margin-bottom:12px;">
+      <span data-en>✅ Message sent! We'll be in touch soon.</span>
+      <span data-ro>✅ Mesaj trimis! Vă vom contacta în curând.</span>
+    </div>
+    <button type="submit" class="calc-btn" data-en>Send Message →</button>
+    <button type="submit" class="calc-btn" data-ro>Trimite Mesaj →</button>
+  </form>
+  <script>
+    document.getElementById('contact-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      var form = this;
+      fetch(form.action, { method: 'POST', body: new FormData(form), headers: { 'Accept': 'application/json' } })
+        .then(function(r) {
+          if (r.ok) {
+            document.getElementById('form-success').style.display = 'block';
+            form.reset();
+          }
+        });
+    });
+  </script>
 </section>
 
 <!-- FOOTER -->
