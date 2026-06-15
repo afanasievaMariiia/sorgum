@@ -51,19 +51,19 @@
 
   /* HERO */
   #hero { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; padding-top: 120px; border-bottom: 1px solid var(--border); position: relative; overflow: hidden; }
-  .hero-gif-bg {
-    position: absolute; top: 0; right: 0; width: 52%; height: 100%;
-    z-index: 0;
+  .hero-video-bg {
+    position: absolute; top: 0; right: 0; width: 55%; height: 100%;
+    z-index: 0; overflow: hidden; border-radius: 0 0 0 80px;
   }
-  .hero-gif-bg img {
-    width: 100%; height: 100%; object-fit: cover; opacity: 0.45; border-radius: 0 0 0 80px;
+  .hero-video-bg video {
+    width: 100%; height: 100%; object-fit: cover; opacity: 0.6;
   }
-  .hero-gif-bg::before {
+  .hero-video-bg::before {
     content: ''; position: absolute; inset: 0;
-    background: linear-gradient(to right, var(--bg) 0%, transparent 40%);
-    z-index: 1; border-radius: 0 0 0 80px;
+    background: linear-gradient(to right, var(--bg) 0%, transparent 35%);
+    z-index: 1;
   }
-  #hero > *:not(.hero-gif-bg) { position: relative; z-index: 2; }
+  #hero > *:not(.hero-video-bg) { position: relative; z-index: 2; }
   .hero-tag { display: inline-flex; align-items: center; gap: 8px; background: var(--bg2); border: 1px solid var(--border); border-radius: 20px; padding: 6px 16px; font-size: 13px; color: var(--muted); margin-bottom: 24px; }
   .hero-tag span { color: var(--green); font-weight: 700; }
   .hero-stat-row { display: flex; gap: 48px; margin-top: 48px; flex-wrap: wrap; }
@@ -172,8 +172,9 @@
     .hamburger { display: flex; }
     section { padding: 72px 20px; }
     .planner-grid { grid-template-columns: 1fr; }
-    .hero-gif-bg { width: 100%; opacity: 0.15; border-radius: 0; }
-    .hero-gif-bg::before { background: linear-gradient(to bottom, var(--bg) 0%, transparent 30%, var(--bg) 100%); border-radius: 0; }
+    .hero-video-bg { width: 100%; border-radius: 0; }
+    .hero-video-bg video { opacity: 0.15; }
+    .hero-video-bg::before { background: linear-gradient(to bottom, var(--bg) 0%, transparent 30%, var(--bg) 100%); }
     .hero-stat-row { gap: 24px; }
     .hero-stat .num { font-size: 28px; }
     .planner-box { padding: 24px; }
@@ -199,7 +200,7 @@
     .btn-primary, .btn-secondary { text-align: center; width: 100%; }
     .planner-box { padding: 16px; }
     .contact-form { padding: 16px; }
-    .hero-gif-bg { display: none; }
+    .hero-video-bg { display: none; }
     footer { padding: 32px 16px; }
   }
 
@@ -250,10 +251,12 @@
 
 <!-- HERO -->
 <section id="hero">
-  <div class="hero-gif-bg">
-    <img src="https://media2.giphy.com/media/fx5LOa52zgnZXieRPV/giphy.gif" alt="Sorghum field" />
+  <div class="hero-video-bg">
+    <video autoplay muted loop playsinline>
+      <source src="https://videos.pexels.com/video-files/30563808/13103440_2560_1440_30fps.mp4" type="video/mp4">
+    </video>
   </div>
-  <div class="hero-tag">🌱 <span data-en>Moldova's breakthrough crop</span><span data-ro>Cultura revoluționară din Moldova</span></div>
+  <div class="hero-tag">🌱 <span data-en>Made in Moldova</span><span data-ro>Fabricat în Moldova</span></div>
   <div class="section-label">Sorghum</div>
   <h1 data-en>The most efficient<br>crop on Earth.</h1>
   <h1 data-ro>Cultura cu cea mai<br>mare eficiență.</h1>
