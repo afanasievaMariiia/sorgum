@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SorgAI — Processing</title>
+<style>
+  :root {
+    --green: #2d8a4e; --green-dark: #1f6b3a; --green-light: #d4edda;
+    --bg: #f2f7ee; --bg2: #ffffff; --bg3: #e6f2df;
+    --text: #0f1f0b; --muted: #2a4a22; --border: #bdd9b0; --white: #1a2e14;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+
+  /* NAV */
+  nav { position: fixed; top: 0; width: 100%; background: rgba(242,247,238,0.97); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); z-index: 1000; padding: 0 40px; height: 64px; display: flex; align-items: center; justify-content: space-between; }
+  .logo { font-size: 22px; font-weight: 900; color: var(--white); letter-spacing: -0.5px; }
+  .logo span { color: var(--green); }
+  .nav-links { display: flex; gap: 32px; list-style: none; }
+  .nav-links a { color: var(--muted); text-decoration: none; font-size: 14px; font-weight: 500; transition: color 0.2s; position: relative; padding-bottom: 4px; }
+  .nav-links a:hover { color: var(--white); }
+  .nav-links a.active-page { color: var(--green) !important; }
+  .nav-links a.active-page::after { content: ''; position: absolute; bottom: -4px; left: 0; right: 0; height: 2px; background: var(--green); border-radius: 1px; }
+  .lang-toggle { display: flex; background: var(--bg3); border-radius: 20px; overflow: hidden; border: 1px solid var(--border); }
+  .lang-btn { padding: 6px 14px; font-size: 12px; font-weight: 700; cursor: pointer; border: none; background: transparent; color: var(--muted); transition: all 0.2s; letter-spacing: 0.5px; }
+  .lang-btn.active { background: var(--green); color: #000; border-radius: 20px; }
+
+  /* SECTIONS */
+  section { padding: 100px 40px; max-width: 1200px; margin: 0 auto; }
+  .section-label { font-size: 12px; font-weight: 700; color: var(--green); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 12px; }
+  h2 { font-size: clamp(28px, 4vw, 48px); font-weight: 800; line-height: 1.1; letter-spacing: -1px; margin-bottom: 16px; }
+  h3 { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+  h4 { font-size: 16px; font-weight: 700; margin-bottom: 8px; color: var(--text); }
+  p { color: var(--muted); font-size: 16px; max-width: 680px; }
+  .divider { height: 1px; background: var(--border); max-width: 1200px; margin: 0 auto; }
+
+  /* HERO BANNER */
+  .proc-hero { padding: 120px 40px 60px; max-width: 1200px; margin: 0 auto; }
+  .proc-hero h1 { font-size: clamp(36px, 5vw, 64px); font-weight: 900; line-height: 1.05; letter-spacing: -2px; margin-bottom: 20px; }
+
+  /* FLOW */
+  .flow-row { display: flex; flex-wrap: wrap; align-items: stretch; gap: 0; margin: 40px 0; border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
+  .flow-step { flex: 1; min-width: 160px; padding: 24px 20px; background: var(--bg2); border-right: 1px solid var(--border); text-align: center; position: relative; }
+  .flow-step:last-child { border-right: none; }
+  .flow-step .fs-icon { font-size: 32px; margin-bottom: 8px; }
+  .flow-step .fs-num { font-size: 11px; font-weight: 800; color: var(--green); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 4px; }
+  .flow-step .fs-title { font-size: 14px; font-weight: 800; color: var(--text); margin-bottom: 4px; }
+  .flow-step .fs-sub { font-size: 12px; color: var(--muted); }
+  .flow-step::after { content: '→'; position: absolute; right: -12px; top: 50%; transform: translateY(-50%); font-size: 16px; color: var(--green); font-weight: 900; z-index: 1; background: var(--bg2); padding: 2px; }
+  .flow-step:last-child::after { display: none; }
+
+  /* PROCESS CARDS */
+  .proc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-top: 48px; }
+  .proc-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; padding: 32px; }
+  .proc-card.full { grid-column: 1/-1; }
+  .proc-card h3 { color: var(--text); margin-bottom: 12px; }
+  .proc-card p { max-width: 100%; font-size: 15px; }
+
+  /* SPEC TABLE */
+  .spec-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 16px; }
+  .spec-table th { background: var(--bg3); text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border); font-weight: 700; color: var(--text); }
+  .spec-table td { padding: 9px 12px; border-bottom: 1px solid var(--border); color: var(--muted); }
+  .spec-table tr:last-child td { border-bottom: none; }
+  .spec-table .val { color: var(--green); font-weight: 700; }
+
+  /* COMPOSITION STAGES */
+  .stages { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 24px; }
+  .stage-card { border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+  .stage-head { background: var(--green); color: #fff; padding: 12px 16px; font-weight: 800; font-size: 13px; }
+  .stage-body { background: var(--bg2); padding: 14px 16px; }
+  .stage-row { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+  .stage-row:last-child { border: none; }
+  .stage-row .sv { color: var(--green); font-weight: 700; }
+
+  /* PRODUCT OUTPUT */
+  .output-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: 16px; margin-top: 24px; }
+  .output-card { background: var(--bg3); border: 1px solid var(--border); border-radius: 12px; padding: 20px; text-align: center; }
+  .output-card .oi { font-size: 32px; margin-bottom: 8px; }
+  .output-card .ov { font-size: 22px; font-weight: 900; color: var(--green); letter-spacing: -0.5px; }
+  .output-card .ol { font-size: 12px; color: var(--muted); margin-top: 4px; }
+  .output-card .op { font-size: 11px; color: var(--green); font-weight: 700; margin-top: 6px; }
+
+  /* PHOTO GRID */
+  .photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px,1fr)); gap: 8px; margin-top: 20px; }
+  .photo-grid img { width: 100%; height: 130px; object-fit: cover; border-radius: 8px; cursor: zoom-in; transition: opacity 0.2s; }
+  .photo-grid img:hover { opacity: 0.85; }
+
+  /* SYRUP FACTS */
+  .facts-list { list-style: none; margin-top: 16px; }
+  .facts-list li { padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 14px; color: var(--muted); display: flex; gap: 10px; }
+  .facts-list li:last-child { border: none; }
+  .facts-list li::before { content: '✓'; color: var(--green); font-weight: 900; flex-shrink: 0; }
+
+  /* INVESTMENT TABLE */
+  .inv-table { width: 100%; border-collapse: collapse; font-size: 14px; margin-top: 20px; }
+  .inv-table th { background: var(--bg3); padding: 12px 16px; text-align: left; font-weight: 800; border-bottom: 2px solid var(--border); }
+  .inv-table td { padding: 12px 16px; border-bottom: 1px solid var(--border); }
+  .inv-table tr:last-child td { border: none; }
+  .inv-table .price { color: var(--green); font-weight: 800; }
+  .inv-table .rev { color: var(--green-dark); font-weight: 700; }
+
+  /* DOC DOWNLOADS */
+  .doc-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px,1fr)); gap: 12px; margin-top: 16px; }
+  .doc-card { display: flex; align-items: center; gap: 14px; background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 16px; text-decoration: none; transition: border-color 0.2s; }
+  .doc-card:hover { border-color: var(--green); }
+  .doc-icon { font-size: 28px; flex-shrink: 0; }
+  .doc-title { font-size: 13px; font-weight: 700; color: var(--text); }
+  .doc-meta { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+  /* LANG */
+  [data-ro] { display: none !important; }
+  body.ro [data-en] { display: none !important; }
+  body.ro [data-ro] { display: block !important; }
+  body.ro span[data-ro] { display: inline !important; }
+  body.ro span[data-en] { display: none !important; }
+
+  /* HAMBURGER */
+  .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; background: none; border: none; }
+  .hamburger span { display: block; width: 22px; height: 2px; background: var(--text); border-radius: 2px; }
+  .mobile-menu { display: none; position: fixed; top: 64px; left: 0; right: 0; bottom: 0; background: rgba(242,247,238,0.99); z-index: 999; flex-direction: column; align-items: center; justify-content: center; gap: 32px; }
+  .mobile-menu.open { display: flex; }
+  .mobile-menu a { color: var(--text); text-decoration: none; font-size: 22px; font-weight: 700; }
+  .mobile-menu a.active-page { color: var(--green) !important; }
+  .mobile-lang { display: flex; gap: 12px; margin-top: 16px; }
+
+  /* LIGHTBOX */
+  .lightbox-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 9999; align-items: center; justify-content: center; }
+  .lightbox-overlay.open { display: flex; }
+  .lightbox-overlay img { max-width: 90vw; max-height: 88vh; object-fit: contain; border-radius: 8px; }
+  .lightbox-close { position: fixed; top: 20px; right: 28px; font-size: 36px; color: #fff; cursor: pointer; background: none; border: none; font-weight: 300; opacity: 0.85; }
+  .lightbox-close:hover { opacity: 1; }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    nav { padding: 0 20px; }
+    .nav-links { display: none; }
+    .hamburger { display: flex; }
+    section { padding: 72px 20px; }
+    .proc-hero { padding: 100px 20px 48px; }
+    .proc-grid { grid-template-columns: 1fr; }
+    .proc-card.full { grid-column: 1; }
+    .stages { grid-template-columns: 1fr; }
+    .flow-row { flex-direction: column; }
+    .flow-step { border-right: none; border-bottom: 1px solid var(--border); }
+    .flow-step::after { content: '↓'; right: auto; left: 50%; top: auto; bottom: -14px; transform: translateX(-50%); }
+  }
+  @media (max-width: 600px) {
+    nav { padding: 0 16px; }
+    section { padding: 56px 16px; }
+    .proc-hero { padding: 90px 16px 40px; }
+    .output-grid { grid-template-columns: 1fr 1fr; }
+    footer { padding: 32px 16px; }
+  }
+  @media (max-width: 380px) { .lang-toggle { display: none; } }
+
+  /* FOOTER */
+  footer { border-top: 1px solid var(--border); padding: 40px; text-align: center; color: var(--muted); font-size: 13px; }
+</style>
+</head>
+<body id="body">
+
+<nav>
+  <a href="index.html" class="logo" style="text-decoration:none;"><span>Sorghum</span></a>
+  <ul class="nav-links">
+    <li><a href="index.html"><span data-en>About</span><span data-ro>Despre</span></a></li>
+    <li><a href="science.html"><span data-en>Science</span><span data-ro>Știință</span></a></li>
+    <li><a href="institute.html"><span data-en>Institute</span><span data-ro>Institut</span></a></li>
+    <li><a href="products.html"><span data-en>Products</span><span data-ro>Produse</span></a></li>
+    <li><a href="processing.html"><span data-en>Processing</span><span data-ro>Procesare</span></a></li>
+    <li><a href="farmers.html"><span data-en>For Farmers</span><span data-ro>Agricultori</span></a></li>
+    <li><a href="contact.html"><span data-en>Contact</span><span data-ro>Contact</span></a></li>
+  </ul>
+  <div style="display:flex; align-items:center; gap:12px;">
+    <div class="lang-toggle">
+      <button class="lang-btn active" id="btn-en" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" id="btn-ro" onclick="setLang('ro')">RO</button>
+    </div>
+    <button class="hamburger" id="hamburger" onclick="toggleMenu()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="index.html" onclick="closeMenu()"><span data-en>About</span><span data-ro>Despre</span></a>
+  <a href="science.html" onclick="closeMenu()"><span data-en>Science</span><span data-ro>Știință</span></a>
+  <a href="institute.html" onclick="closeMenu()"><span data-en>Institute</span><span data-ro>Institut</span></a>
+  <a href="products.html" onclick="closeMenu()"><span data-en>Products</span><span data-ro>Produse</span></a>
+  <a href="processing.html" onclick="closeMenu()"><span data-en>Processing</span><span data-ro>Procesare</span></a>
+  <a href="farmers.html" onclick="closeMenu()"><span data-en>For Farmers</span><span data-ro>Agricultori</span></a>
+  <a href="contact.html" onclick="closeMenu()"><span data-en>Contact</span><span data-ro>Contact</span></a>
+  <div class="mobile-lang">
+    <button class="lang-btn active" id="mbtn-en" onclick="setLang('en'); closeMenu()">EN</button>
+    <button class="lang-btn" id="mbtn-ro" onclick="setLang('ro'); closeMenu()">RO</button>
+  </div>
+</div>
+
+<!-- HERO -->
+<div class="proc-hero">
+  <div class="section-label" data-en>From Field to Product</div>
+  <div class="section-label" data-ro>De la Câmp la Produs</div>
+  <h1 data-en>Sorghum Processing</h1>
+  <h1 data-ro>Procesarea Sorgului</h1>
+  <p data-en style="font-size:18px; color:var(--muted); margin-top:12px;">Every tonne of sorghum biomass can be transformed into high-value food, energy, and industrial products. This page covers the complete processing chain — from juice extraction to syrup, bioethanol, citric acid, and more.</p>
+  <p data-ro style="font-size:18px; color:var(--muted); margin-top:12px;">Fiecare tonă de biomasă de sorg poate fi transformată în produse alimentare, energetice și industriale de mare valoare. Această pagină acoperă întregul lanț de procesare — de la extragerea sucului la sirop, bioetanol, acid citric și altele.</p>
+</div>
+
+<!-- PROCESSING FLOW -->
+<div class="divider"></div>
+<section>
+  <div class="section-label" data-en>Processing Chain</div>
+  <div class="section-label" data-ro>Lanțul de Procesare</div>
+  <h2 data-en>From biomass to finished product</h2>
+  <h2 data-ro>De la biomasă la produs finit</h2>
+
+  <div class="flow-row">
+    <div class="flow-step">
+      <div class="fs-icon">🌿</div>
+      <div class="fs-num" data-en>Step 1</div><div class="fs-num" data-ro>Etapa 1</div>
+      <div class="fs-title" data-en>Harvest</div><div class="fs-title" data-ro>Recoltare</div>
+      <div class="fs-sub" data-en>Sep – Oct. 80–160 t/ha</div>
+      <div class="fs-sub" data-ro>Sept – Oct. 80–160 t/ha</div>
+    </div>
+    <div class="flow-step">
+      <div class="fs-icon">⚙️</div>
+      <div class="fs-num" data-en>Step 2</div><div class="fs-num" data-ro>Etapa 2</div>
+      <div class="fs-title" data-en>Juice Extraction</div><div class="fs-title" data-ro>Extragerea Sucului</div>
+      <div class="fs-sub" data-en>TZ-20 press · 10 t/h</div>
+      <div class="fs-sub" data-ro>Presă TZ-20 · 10 t/h</div>
+    </div>
+    <div class="flow-step">
+      <div class="fs-icon">🧪</div>
+      <div class="fs-num" data-en>Step 3</div><div class="fs-num" data-ro>Etapa 3</div>
+      <div class="fs-title" data-en>Clarification</div><div class="fs-title" data-ro>Limpezire</div>
+      <div class="fs-sub" data-en>pH adjustment · filtration</div>
+      <div class="fs-sub" data-ro>Ajustare pH · filtrare</div>
+    </div>
+    <div class="flow-step">
+      <div class="fs-icon">🔥</div>
+      <div class="fs-num" data-en>Step 4</div><div class="fs-num" data-ro>Etapa 4</div>
+      <div class="fs-title" data-en>Vacuum Evaporation</div><div class="fs-title" data-ro>Evaporare Vacuum</div>
+      <div class="fs-sub" data-en>Rossi &amp; Catelli POSEIDON DE</div>
+      <div class="fs-sub" data-ro>Rossi &amp; Catelli POSEIDON DE</div>
+    </div>
+    <div class="flow-step">
+      <div class="fs-icon">🏭</div>
+      <div class="fs-num" data-en>Step 5</div><div class="fs-num" data-ro>Etapa 5</div>
+      <div class="fs-title" data-en>Final Products</div><div class="fs-title" data-ro>Produse Finale</div>
+      <div class="fs-sub" data-en>Syrup · Ethanol · Citric acid</div>
+      <div class="fs-sub" data-ro>Sirop · Etanol · Acid citric</div>
+    </div>
+  </div>
+
+  <!-- OUTPUT PER 100T -->
+  <h3 data-en style="margin-top:48px; color:var(--text);">Output from 100 Tonnes of Biomass</h3>
+  <h3 data-ro style="margin-top:48px; color:var(--text);">Randament din 100 Tone de Biomasă</h3>
+  <p data-en style="margin-top:8px;">Applying the full processing chain to a 100-hectare crop delivers the following outputs per year:</p>
+  <p data-ro style="margin-top:8px;">Aplicând întregul lanț de procesare la o cultură de 100 de hectare, se obțin anual următoarele rezultate:</p>
+  <div class="output-grid">
+    <div class="output-card">
+      <div class="oi">🧃</div>
+      <div class="ov">50–55t</div>
+      <div class="ol" data-en>juice with 14–16% sugar</div>
+      <div class="ol" data-ro>suc cu 14–16% zahăr</div>
+    </div>
+    <div class="output-card">
+      <div class="oi">🍯</div>
+      <div class="ov">8–10 t/ha</div>
+      <div class="ol" data-en>sweet syrup (honey quality)</div>
+      <div class="ol" data-ro>sirop dulce (calitate miere)</div>
+      <div class="op">4,200 t/year capacity</div>
+    </div>
+    <div class="output-card">
+      <div class="oi">⛽</div>
+      <div class="ov">10–15t</div>
+      <div class="ol" data-en>food-grade bioethanol</div>
+      <div class="ol" data-ro>bioetanol alimentar</div>
+      <div class="op">€1M/year revenue</div>
+    </div>
+    <div class="output-card">
+      <div class="oi">🧴</div>
+      <div class="ov" data-en>Citric Acid</div>
+      <div class="ov" data-ro>Acid Citric</div>
+      <div class="ol" data-en>same processing line</div>
+      <div class="ol" data-ro>aceeași linie de procesare</div>
+      <div class="op">€1.5M/year revenue</div>
+    </div>
+    <div class="output-card">
+      <div class="oi">🔋</div>
+      <div class="ov">25–30t</div>
+      <div class="ol" data-en>bagasse → pellets / biogas</div>
+      <div class="ol" data-ro>bagasă → pelete / biogaz</div>
+    </div>
+    <div class="output-card">
+      <div class="oi">🌱</div>
+      <div class="ov">+1.5–2t</div>
+      <div class="ol" data-en>humus per ha/year from roots</div>
+      <div class="ol" data-ro>humus per ha/an din rădăcini</div>
+    </div>
+  </div>
+</section>
+
+<!-- JUICE EXTRACTION -->
+<div class="divider"></div>
+<section>
+  <div class="section-label" data-en>Stage 1 — Juice Extraction</div>
+  <div class="section-label" data-ro>Etapa 1 — Extragerea Sucului</div>
+  <h2 data-en>Pressing the stalks</h2>
+  <h2 data-ro>Presarea tulpinilor</h2>
+  <p data-en>Sweet sorghum stalks are crushed and pressed using the TZ-20 industrial press line (Henan Tianzhong Machinery Co., China). From 1 tonne of biomass, approximately 500 kg of juice is extracted with a sugar content of 10–15%.</p>
+  <p data-ro>Tulpinile de sorg zaharat sunt zdrobite și presate cu linia industrială TZ-20 (Henan Tianzhong Machinery Co., China). Dintr-o tonă de biomasă se extrag aproximativ 500 kg de suc cu un conținut de zahăr de 10–15%.</p>
+
+  <div class="proc-grid" style="margin-top:32px;">
+    <div class="proc-card">
+      <h3 data-en>⚙️ TZ-20 Press Line — Technical Specs</h3>
+      <h3 data-ro>⚙️ Linia de Presare TZ-20 — Specificații Tehnice</h3>
+      <table class="spec-table">
+        <tr><th data-en>Parameter</th><th data-ro>Parametru</th><th data-en>Value</th><th data-ro>Valoare</th></tr>
+        <tr><td data-en>Capacity</td><td data-ro>Capacitate</td><td class="val">10 t / hour</td></tr>
+        <tr><td data-en>Screw diameter</td><td data-ro>Diametrul șnecului</td><td class="val">630 mm (double screw)</td></tr>
+        <tr><td data-en>Power</td><td data-ro>Putere</td><td class="val">37 kW</td></tr>
+        <tr><td data-en>Mesh diameter</td><td data-ro>Diametrul plasei</td><td class="val">650 mm</td></tr>
+        <tr><td data-en>Dimensions</td><td data-ro>Dimensiuni</td><td class="val">5800 × 1300 × 1800 mm</td></tr>
+        <tr><td data-en>Weight</td><td data-ro>Greutate</td><td class="val">5,300 kg</td></tr>
+        <tr><td data-en>Speed</td><td data-ro>Viteza</td><td class="val">12–15 rpm</td></tr>
+        <tr><td data-en>Pressure control</td><td data-ro>Control presiune</td><td class="val" data-en>Hydraulic</td><td class="val" data-ro>Hidraulic</td></tr>
+        <tr><td data-en>Unit price (×2 units)</td><td data-ro>Preț unitar (×2 unități)</td><td class="val">$29,000 USD (total $70,000 FOB Qingdao)</td></tr>
+      </table>
+    </div>
+    <div class="proc-card">
+      <h3 data-en>🧪 Juice Composition by Processing Stage</h3>
+      <h3 data-ro>🧪 Compoziția Sucului pe Etape de Procesare</h3>
+      <p data-en style="font-size:13px; margin-bottom:16px;">Data from the Institute of Food Industry, Republic of Moldova, 2008</p>
+      <p data-ro style="font-size:13px; margin-bottom:16px;">Date de la Institutul de Alimentație, Republica Moldova, 2008</p>
+      <div class="stages">
+        <div class="stage-card">
+          <div class="stage-head" data-en>Stage 1 — Raw Juice</div>
+          <div class="stage-head" data-ro>Etapa 1 — Suc Brut</div>
+          <div class="stage-body">
+            <div class="stage-row"><span data-en>Dry matter</span><span data-ro>Substanță uscată</span><span class="sv">18.0%</span></div>
+            <div class="stage-row"><span data-en>Total sugars</span><span data-ro>Zaharuri totale</span><span class="sv">16.1%</span></div>
+            <div class="stage-row"><span>pH</span><span class="sv">5.15</span></div>
+            <div class="stage-row"><span data-en>Potassium</span><span data-ro>Potasiu</span><span class="sv">3163 mg/L</span></div>
+            <div class="stage-row"><span data-en>Antioxidants</span><span data-ro>Antioxidanți</span><span class="sv">0.17 mg/g</span></div>
+          </div>
+        </div>
+        <div class="stage-card">
+          <div class="stage-head" data-en>Stage 2 — Clarified</div>
+          <div class="stage-head" data-ro>Etapa 2 — Limpezit</div>
+          <div class="stage-body">
+            <div class="stage-row"><span data-en>Dry matter</span><span data-ro>Substanță uscată</span><span class="sv">17.8%</span></div>
+            <div class="stage-row"><span data-en>Total sugars</span><span data-ro>Zaharuri totale</span><span class="sv">15.7%</span></div>
+            <div class="stage-row"><span>pH</span><span class="sv">4.0</span></div>
+            <div class="stage-row"><span data-en>Potassium</span><span data-ro>Potasiu</span><span class="sv">1390 mg/L</span></div>
+            <div class="stage-row"><span data-en>Antioxidants</span><span data-ro>Antioxidanți</span><span class="sv">0.10 mg/g</span></div>
+          </div>
+        </div>
+        <div class="stage-card">
+          <div class="stage-head" data-en>Stage 3 — Concentrated</div>
+          <div class="stage-head" data-ro>Etapa 3 — Concentrat</div>
+          <div class="stage-body">
+            <div class="stage-row"><span data-en>Dry matter</span><span data-ro>Substanță uscată</span><span class="sv">71.7%</span></div>
+            <div class="stage-row"><span data-en>Total sugars</span><span data-ro>Zaharuri totale</span><span class="sv">22.3%</span></div>
+            <div class="stage-row"><span data-en>Sucrose</span><span data-ro>Zaharoză</span><span class="sv">17.3%</span></div>
+            <div class="stage-row"><span data-en>Appearance</span><span data-ro>Aspect</span><span class="sv" data-en>Brown syrup</span><span class="sv" data-ro>Sirop cafeniu</span></div>
+            <div class="stage-row"><span data-en>Taste</span><span data-ro>Gust</span><span class="sv" data-en>Sweet, caramel</span><span class="sv" data-ro>Dulce, caramel</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="photo-grid" style="margin-top:20px;">
+        <img src="images/proc_line_image1.png" alt="Processing line" onclick="openLightbox(this)">
+        <img src="images/proc_line_image2.png" alt="Juice extraction" onclick="openLightbox(this)">
+        <img src="images/proc_app8_image1.png" alt="Processing line diagram" onclick="openLightbox(this)">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SYRUP PRODUCTION -->
+<div class="divider"></div>
+<section>
+  <div class="section-label" data-en>Stage 2 — Syrup Production</div>
+  <div class="section-label" data-ro>Etapa 2 — Producerea Siropului</div>
+  <h2 data-en>Sweet sorghum syrup</h2>
+  <h2 data-ro>Siropul de sorg zaharat</h2>
+  <p data-en>The clarified juice is concentrated under vacuum using the Italian Rossi &amp; Catelli POSEIDON DE evaporator, producing a pure natural syrup with no additives or preservatives — only water, glucose and fructose.</p>
+  <p data-ro>Sucul limpezit este concentrat sub vid cu evaporatorul italian Rossi &amp; Catelli POSEIDON DE, producând un sirop natural pur fără aditivi sau conservanți — doar apă, glucoză și fructoză.</p>
+
+  <div class="proc-grid" style="margin-top:32px;">
+    <div class="proc-card">
+      <h3 data-en>🏭 Vacuum Evaporator — Rossi &amp; Catelli POSEIDON DE</h3>
+      <h3 data-ro>🏭 Evaporator Vacuum — Rossi &amp; Catelli POSEIDON DE</h3>
+      <p data-en style="font-size:14px; margin-bottom:16px;">Manufactured by CFT Group, Italy. Designed for vacuum concentration of viscous liquid products using falling-film technology (TVR). The parallel-flow function ensures the highest-concentration product evaporates at the lowest temperature, preserving all organoleptic characteristics.</p>
+      <p data-ro style="font-size:14px; margin-bottom:16px;">Fabricat de CFT Group, Italia. Conceput pentru concentrarea sub vid a produselor lichide vâscoase prin tehnologia filmului în cădere (TVR). Fluxul paralel asigură că produsul cu cea mai mare concentrație se evaporă la temperatura cea mai scăzută, păstrând toate caracteristicile organoleptice.</p>
+      <table class="spec-table">
+        <tr><td data-en>Annual output</td><td data-ro>Producție anuală</td><td class="val">4,200 tonnes of syrup</td></tr>
+        <tr><td data-en>Investment</td><td data-ro>Investiție</td><td class="val">€300,000</td></tr>
+        <tr><td data-en>Origin</td><td data-ro>Origine</td><td class="val">Italy (CFT Group)</td></tr>
+        <tr><td data-en>Technology</td><td data-ro>Tehnologie</td><td class="val" data-en>Falling film + TVR vacuum</td><td class="val" data-ro>Film în cădere + vacuum TVR</td></tr>
+      </table>
+    </div>
+    <div class="proc-card">
+      <h3 data-en>🍯 Syrup Composition &amp; Key Facts</h3>
+      <h3 data-ro>🍯 Compoziția și Proprietățile Siropului</h3>
+      <div style="background:var(--bg3); border-radius:10px; padding:16px; margin-bottom:16px; display:flex; gap:20px; flex-wrap:wrap;">
+        <div style="text-align:center;"><div style="font-size:28px; font-weight:900; color:var(--green);">30%</div><div style="font-size:12px; color:var(--muted);" data-en>Natural water</div><div style="font-size:12px; color:var(--muted);" data-ro>Apă naturală</div></div>
+        <div style="text-align:center;"><div style="font-size:28px; font-weight:900; color:var(--green);">35%</div><div style="font-size:12px; color:var(--muted);">Glucose</div></div>
+        <div style="text-align:center;"><div style="font-size:28px; font-weight:900; color:var(--green);">35%</div><div style="font-size:12px; color:var(--muted);">Fructose</div></div>
+        <div style="text-align:center;"><div style="font-size:28px; font-weight:900; color:var(--green);">0%</div><div style="font-size:12px; color:var(--muted);" data-en>Additives</div><div style="font-size:12px; color:var(--muted);" data-ro>Aditivi</div></div>
+      </div>
+      <ul class="facts-list">
+        <li data-en>Ranked 5th out of 40 foods tested for antioxidant content</li>
+        <li data-ro>Clasat pe locul 5 din 40 de alimente testate pentru conținutul de antioxidanți</li>
+        <li data-en>Contains iron, calcium and potassium — unlike refined sugar</li>
+        <li data-ro>Conține fier, calciu și potasiu — spre deosebire de zahărul rafinat</li>
+        <li data-en>Does not require refrigeration — will not mold</li>
+        <li data-ro>Nu necesită refrigerare — nu face mucegai</li>
+        <li data-en>NOT the same as molasses — molasses is a sugar industry byproduct; sorghum syrup is pure pressed juice</li>
+        <li data-ro>NU este același lucru cu melasa — melasa este un subprodus al industriei zahărului; siropul de sorg este suc pur presat</li>
+        <li data-en>Hungarian company first introduced sorghum syrup to European markets in 2018 (FoodNavigator)</li>
+        <li data-ro>O companie ungară a introdus prima dată siropul de sorg pe piețele europene în 2018 (FoodNavigator)</li>
+        <li data-en>EU Novel Food approval process initiated (Regulation EU 2015/2283)</li>
+        <li data-ro>Proces de aprobare Novel Food UE inițiat (Regulamentul UE 2015/2283)</li>
+      </ul>
+      <div class="photo-grid" style="margin-top:16px;">
+        <img src="images/proc_syrup_image1.jpeg" alt="Sorghum syrup facts" onclick="openLightbox(this)">
+        <img src="images/proc_saga_image1.png" alt="Sorghum syrup production" onclick="openLightbox(this)">
+        <img src="images/proc_saga_image2.png" alt="Syrup product" onclick="openLightbox(this)">
+        <img src="images/proc_uzb_image1.png" alt="Sorghum syrup Uzbekistan" onclick="openLightbox(this)">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- OTHER PRODUCTS -->
+<div class="divider"></div>
+<section>
+  <div class="section-label" data-en>Other Products from Juice</div>
+  <div class="section-label" data-ro>Alte Produse din Suc</div>
+  <h2 data-en>More from the same juice</h2>
+  <h2 data-ro>Mai multe din același suc</h2>
+  <p data-en>The same juice stream can feed multiple processing lines — citric acid, bioethanol, vinegar, amino acids and yeast protein all use largely the same base equipment.</p>
+  <p data-ro>Același flux de suc poate alimenta mai multe linii de procesare — acidul citric, bioetanolul, oțetul, aminoacizii și proteina din drojdie folosesc în mare parte același echipament de bază.</p>
+
+  <div class="proc-grid" style="margin-top:32px;">
+    <div class="proc-card">
+      <h3 data-en>⛽ Bioethanol (Food-Grade Alcohol)</h3>
+      <h3 data-ro>⛽ Bioetanol (Alcool Alimentar)</h3>
+      <p data-en style="font-size:14px;">From 100t biomass: 10–15 tonnes of ethanol. Processing line cost: €600,000 (China). Estimated annual revenue: €1,000,000.</p>
+      <p data-ro style="font-size:14px;">Din 100t biomasă: 10–15 tone etanol. Costul liniei de procesare: €600.000 (China). Venit anual estimat: €1.000.000.</p>
+      <div style="display:flex; gap:16px; margin-top:16px; flex-wrap:wrap;">
+        <div style="background:var(--bg3); border-radius:8px; padding:12px 16px; text-align:center;">
+          <div style="font-size:20px; font-weight:900; color:var(--green);">€600K</div>
+          <div style="font-size:12px; color:var(--muted);" data-en>Equipment cost</div>
+          <div style="font-size:12px; color:var(--muted);" data-ro>Cost echipament</div>
+        </div>
+        <div style="background:var(--bg3); border-radius:8px; padding:12px 16px; text-align:center;">
+          <div style="font-size:20px; font-weight:900; color:var(--green);">€1M</div>
+          <div style="font-size:12px; color:var(--muted);" data-en>Annual revenue</div>
+          <div style="font-size:12px; color:var(--muted);" data-ro>Venit anual</div>
+        </div>
+      </div>
+    </div>
+    <div class="proc-card">
+      <h3 data-en>🧴 Citric Acid</h3>
+      <h3 data-ro>🧴 Acid Citric</h3>
+      <p data-en style="font-size:14px;">Highest-value product from the juice. Processing line cost: €1,000,000. Estimated annual revenue: €1,500,000. Same infrastructure also supports vinegar, amino acids and yeast protein production (each requiring ~€200K additional).</p>
+      <p data-ro style="font-size:14px;">Cel mai valoros produs din suc. Costul liniei: €1.000.000. Venit anual estimat: €1.500.000. Aceeași infrastructură suportă și producerea de oțet, aminoacizi și proteine din drojdie (fiecare necesitând ~€200K suplimentar).</p>
+      <div style="display:flex; gap:16px; margin-top:16px; flex-wrap:wrap;">
+        <div style="background:var(--bg3); border-radius:8px; padding:12px 16px; text-align:center;">
+          <div style="font-size:20px; font-weight:900; color:var(--green);">€1M</div>
+          <div style="font-size:12px; color:var(--muted);" data-en>Equipment cost</div>
+          <div style="font-size:12px; color:var(--muted);" data-ro>Cost echipament</div>
+        </div>
+        <div style="background:var(--bg3); border-radius:8px; padding:12px 16px; text-align:center;">
+          <div style="font-size:20px; font-weight:900; color:var(--green);">€1.5M</div>
+          <div style="font-size:12px; color:var(--muted);" data-en>Annual revenue</div>
+          <div style="font-size:12px; color:var(--muted);" data-ro>Venit anual</div>
+        </div>
+      </div>
+    </div>
+    <div class="proc-card">
+      <h3 data-en>🔋 Bagasse — Energy &amp; Materials</h3>
+      <h3 data-ro>🔋 Bagasă — Energie și Materiale</h3>
+      <p data-en style="font-size:14px;">25–30 tonnes of dry bagasse per 100t biomass. This fibre-rich residue has significant secondary value:</p>
+      <p data-ro style="font-size:14px;">25–30 tone de bagasă uscată per 100t biomasă. Acest reziduu bogat în fibre are o valoare secundară semnificativă:</p>
+      <ul class="facts-list" style="margin-top:12px;">
+        <li data-en>Pellets &amp; briquettes — solid biofuel (Moldova: 75 active producers, 300+ biomass plants)</li>
+        <li data-ro>Pelete și brichete — biocombustibil solid (Moldova: 75 producători activi, 300+ centrale pe biomasă)</li>
+        <li data-en>16–18 thousand m³ biogas per 30t bagasse</li>
+        <li data-ro>16–18 mii m³ biogaz per 30t bagasă</li>
+        <li data-en>Eco-packaging, cardboard, paper — replaces wood pulp</li>
+        <li data-ro>Ambalaje ecologice, carton, hârtie — înlocuiește pasta de lemn</li>
+        <li data-en>Construction materials — natural, biodegradable</li>
+        <li data-ro>Materiale de construcție — naturale, biodegradabile</li>
+      </ul>
+    </div>
+    <div class="proc-card">
+      <h3 data-en>🧫 Other Juice Products</h3>
+      <h3 data-ro>🧫 Alte Produse din Suc</h3>
+      <p data-en style="font-size:14px;">Products from the juice stream that offer high economic value from the same base raw material:</p>
+      <p data-ro style="font-size:14px;">Produse din fluxul de suc cu valoare economică ridicată din aceeași materie primă de bază:</p>
+      <ul class="facts-list" style="margin-top:12px;">
+        <li data-en>Vinegar — same line as citric acid + ~€200K</li>
+        <li data-ro>Oțet — aceeași linie ca acidul citric + ~€200K</li>
+        <li data-en>Yeast protein — high-value feed &amp; food ingredient</li>
+        <li data-ro>Proteină din drojdie — ingredient valoros pentru furaje și alimente</li>
+        <li data-en>Amino acids — pharmaceutical &amp; nutraceutical grade</li>
+        <li data-ro>Aminoacizi — grad farmaceutic și nutraceutic</li>
+        <li data-en>Glucose syrup — food &amp; confectionery industry</li>
+        <li data-ro>Sirop de glucoză — industria alimentară și cofetărie</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- MORE PHOTOS -->
+  <div class="photo-grid" style="margin-top:32px;">
+    <img src="images/proc_saga_image3.png" alt="Sorghum processing" onclick="openLightbox(this)">
+    <img src="images/proc_saga_image4.png" alt="Sorghum syrup line" onclick="openLightbox(this)">
+    <img src="images/proc_saga_image5.png" alt="Processing equipment" onclick="openLightbox(this)">
+    <img src="images/proc_saga_image6.png" alt="Product output" onclick="openLightbox(this)">
+    <img src="images/proc_rom_image1.png" alt="Processing line RO" onclick="openLightbox(this)">
+    <img src="images/proc_rom_image2.png" alt="Equipment diagram" onclick="openLightbox(this)">
+  </div>
+</section>
+
+<!-- FIELD VIDEO -->
+<div class="divider"></div>
+<section>
+  <div class="section-label" data-en>Field Footage</div>
+  <div class="section-label" data-ro>Filmări de Teren</div>
+  <h2 data-en>Processing in Action</h2>
+  <h2 data-ro>Procesarea în Acțiune</h2>
+  <p data-en>Field video showing sorghum harvest and processing operations in Moldova.</p>
+  <p data-ro>Filmări de teren cu recoltarea și procesarea sorgului în Moldova.</p>
+  <div style="margin-top:32px; background:var(--bg2); border:1px solid var(--border); border-radius:12px; overflow:hidden; max-width:720px;">
+    <video controls style="width:100%; display:block; max-height:420px; background:#000;">
+      <source src="proc_field_video1.mp4" type="video/mp4">
+    </video>
+    <div style="padding:16px;">
+      <div style="font-size:14px; font-weight:700; color:var(--text);" data-en>Sorghum Harvest & Processing — Moldova 2025</div>
+      <div style="font-size:14px; font-weight:700; color:var(--text);" data-ro>Recoltare și Procesare Sorg — Moldova 2025</div>
+    </div>
+  </div>
+</section>
+
+<!-- DOCUMENTS -->
+<div class="divider"></div>
+<section>
+  <div class="section-label" data-en>Documentation</div>
+  <div class="section-label" data-ro>Documentație</div>
+  <h2 data-en>Source documents &amp; research</h2>
+  <h2 data-ro>Documente sursă și cercetare</h2>
+  <p data-en>Full technical documentation, investment proposals, PhD theses and scientific analyses available for download.</p>
+  <p data-ro>Documentație tehnică completă, propuneri de investiții, teze de doctorat și analize științifice disponibile pentru descărcare.</p>
+
+  <div class="doc-grid" style="margin-top:32px;">
+    <a href="liniile%20de%20procesare.docx" download class="doc-card">
+      <div class="doc-icon">📄</div>
+      <div><div class="doc-title" data-en>Processing Lines (EN/RU)</div><div class="doc-title" data-ro>Liniile de Procesare (EN/RU)</div>
+      <div class="doc-meta" data-en>Investment project: TZ-20, POSEIDON DE, specs &amp; prices · DOCX</div>
+      <div class="doc-meta" data-ro>Proiect investiție: TZ-20, POSEIDON DE, specificații și prețuri · DOCX</div></div>
+    </a>
+    <a href="LINIILE%20DE%20PROCESARE%20ROM.docx" download class="doc-card">
+      <div class="doc-icon">📄</div>
+      <div><div class="doc-title" data-en>Processing Lines (RO)</div><div class="doc-title" data-ro>Liniile de Procesare (RO)</div>
+      <div class="doc-meta" data-en>Romanian version of the full processing investment proposal · DOCX</div>
+      <div class="doc-meta" data-ro>Versiunea română a propunerii de investiție în procesare · DOCX</div></div>
+    </a>
+    <a href="%D0%9F%D1%80%D0%B8%D0%BB%D0%BE%D0%B6%D0%B5%D0%BD%D0%B8%D0%B5%201%20-%20Facts%20About%20Sorghum%20Syrup.docx" download class="doc-card">
+      <div class="doc-icon">📄</div>
+      <div><div class="doc-title">Facts About Sorghum Syrup</div>
+      <div class="doc-meta" data-en>Syrup facts, EU Novel Food status, market data · DOCX</div>
+      <div class="doc-meta" data-ro>Date sirop, statut Novel Food UE, date de piață · DOCX</div></div>
+    </a>
+    <a href="%D0%9F%D1%80%D0%B8%D0%BB%D0%BE%D0%B6%D0%B5%D0%BD%D0%B8%D0%B5%203%20-%20Suc%20de%20sorg%20compozi%C8%9Bia%20pe%20etape%2011%20docx.docx" download class="doc-card">
+      <div class="doc-icon">📄</div>
+      <div><div class="doc-title" data-en>Juice Composition by Stage (RO)</div><div class="doc-title" data-ro>Compoziția Sucului pe Etape (RO)</div>
+      <div class="doc-meta" data-en>Lab data from Institute of Food Industry, Moldova 2008 · DOCX</div>
+      <div class="doc-meta" data-ro>Date de laborator de la Institutul de Alimentație, Moldova 2008 · DOCX</div></div>
+    </a>
+    <a href="teza-de-doctor-gudima-andrei.pdf" download class="doc-card">
+      <div class="doc-icon">📕</div>
+      <div><div class="doc-title" data-en>PhD Thesis — Gudima Andrei</div><div class="doc-title" data-ro>Teză de Doctorat — Gudima Andrei</div>
+      <div class="doc-meta" data-en>Academic research on sorghum processing · PDF</div>
+      <div class="doc-meta" data-ro>Cercetare academică privind procesarea sorgului · PDF</div></div>
+    </a>
+    <a href="Cerempei%20-%20biocombuatibil%20din%20sorg%20zaharat.pdf" download class="doc-card">
+      <div class="doc-icon">📕</div>
+      <div><div class="doc-title" data-en>Biofuel from Sweet Sorghum — Cerempei</div><div class="doc-title" data-ro>Biocombustibil din Sorg Zaharat — Cerempei</div>
+      <div class="doc-meta" data-en>Research on bioethanol from sweet sorghum · PDF</div>
+      <div class="doc-meta" data-ro>Cercetare privind bioetanolul din sorg zaharat · PDF</div></div>
+    </a>
+    <a href="Technical%20Proposal.pdf" download class="doc-card">
+      <div class="doc-icon">📋</div>
+      <div><div class="doc-title" data-en>Technical Proposal</div><div class="doc-title" data-ro>Propunere Tehnică</div>
+      <div class="doc-meta" data-en>Technical proposal for processing implementation · PDF</div>
+      <div class="doc-meta" data-ro>Propunere tehnică pentru implementarea procesării · PDF</div></div>
+    </a>
+    <a href="BUDGETARY%20PROPOSAL.pdf" download class="doc-card">
+      <div class="doc-icon">📋</div>
+      <div><div class="doc-title" data-en>Budgetary Proposal</div><div class="doc-title" data-ro>Propunere Bugetară</div>
+      <div class="doc-meta" data-en>Investment budget and financial projections · PDF</div>
+      <div class="doc-meta" data-ro>Buget investiții și proiecții financiare · PDF</div></div>
+    </a>
+    <a href="Sorghum_Monograph_Full_Translation_EN.pdf" download class="doc-card">
+      <div class="doc-icon">📕</div>
+      <div><div class="doc-title">Full Monograph (EN)</div>
+      <div class="doc-meta" data-en>425-page complete scientific monograph · PDF</div>
+      <div class="doc-meta" data-ro>Monografie științifică completă 425 pagini · PDF</div></div>
+    </a>
+    <a href="sorg%20zaharat%20rezult%202008%20rom.pdf" download class="doc-card">
+      <div class="doc-icon">📕</div>
+      <div><div class="doc-title" data-en>Sweet Sorghum Field Results 2008 (RO)</div><div class="doc-title" data-ro>Rezultate Câmp Sorg Zaharat 2008 (RO)</div>
+      <div class="doc-meta" data-en>Romanian field trial results from 2008 season · PDF</div>
+      <div class="doc-meta" data-ro>Rezultatele experimentelor de câmp din sezonul 2008 · PDF</div></div>
+    </a>
+  </div>
+</section>
+
+<footer>
+  <div class="logo"><span style="color:var(--green)">Sorghum</span></div>
+  <p style="margin-top:8px;" data-en>Moldova's breakthrough sorghum — proven by science, grown for the future.</p>
+  <p style="margin-top:8px;" data-ro>Sorgul revoluționar din Moldova — dovedit de știință, cultivat pentru viitor.</p>
+  <p style="margin-top:16px; font-size:11px; color:#374151;" data-en>© 2026 Sorghum. All scientific data from peer-reviewed Romanian research (425-page monograph, 2021).</p>
+  <p style="margin-top:16px; font-size:11px; color:#374151;" data-ro>© 2026 Sorghum. Toate datele științifice din cercetări românești revizuite de specialiști (monografie 425 pagini, 2021).</p>
+</footer>
+
+<!-- LIGHTBOX -->
+<div class="lightbox-overlay" id="lightbox" onclick="closeLightbox(event)">
+  <button class="lightbox-close" onclick="closeLightbox()">&times;</button>
+  <img id="lightbox-img" src="" alt="">
+</div>
+
+<script>
+function toggleMenu() { document.getElementById('mobileMenu').classList.toggle('open'); }
+function closeMenu() { document.getElementById('mobileMenu').classList.remove('open'); }
+
+function setLang(lang) {
+  const body = document.getElementById('body');
+  if (lang === 'ro') {
+    body.classList.add('ro');
+    ['btn-ro','mbtn-ro'].forEach(id => document.getElementById(id)?.classList.add('active'));
+    ['btn-en','mbtn-en'].forEach(id => document.getElementById(id)?.classList.remove('active'));
+  } else {
+    body.classList.remove('ro');
+    ['btn-en','mbtn-en'].forEach(id => document.getElementById(id)?.classList.add('active'));
+    ['btn-ro','mbtn-ro'].forEach(id => document.getElementById(id)?.classList.remove('active'));
+  }
+  localStorage.setItem('sorglang', lang);
+}
+
+function openLightbox(img) {
+  document.getElementById('lightbox-img').src = img.src;
+  document.getElementById('lightbox').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeLightbox(e) {
+  if (!e || e.target !== document.getElementById('lightbox-img')) {
+    document.getElementById('lightbox').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+
+(function() {
+  const saved = localStorage.getItem('sorglang');
+  if (saved) setLang(saved);
+  const page = window.location.pathname.split('/').pop() || 'index.html';
+  document.querySelectorAll('.nav-links a, .mobile-menu a').forEach(a => {
+    if (a.getAttribute('href') === page) a.classList.add('active-page');
+  });
+})();
+</script>
+</body>
+</html>

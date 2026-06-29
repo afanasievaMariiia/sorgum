@@ -3,26 +3,26 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sorghum — The Future of Sorghum</title>
+<title>SorgAI — The Future of Sorghum</title>
 <style>
   :root {
-    --green: #22c55e;
-    --green-dark: #16a34a;
-    --green-light: #dcfce7;
-    --bg: #0a0a0a;
-    --bg2: #111827;
-    --bg3: #1e293b;
-    --text: #f1f5f9;
-    --muted: #94a3b8;
-    --border: #1f2937;
-    --white: #ffffff;
+    --green: #2d8a4e;
+    --green-dark: #1f6b3a;
+    --green-light: #d4edda;
+    --bg: #f2f7ee;
+    --bg2: #ffffff;
+    --bg3: #e6f2df;
+    --text: #0f1f0b;
+    --muted: #2a4a22;
+    --border: #bdd9b0;
+    --white: #1a2e14;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
 
   /* NAV */
   nav {
-    position: fixed; top: 0; width: 100%; background: rgba(10,10,10,0.95);
+    position: fixed; top: 0; width: 100%; background: rgba(242,247,238,0.97);
     backdrop-filter: blur(10px); border-bottom: 1px solid var(--border);
     z-index: 1000; padding: 0 40px; height: 64px;
     display: flex; align-items: center; justify-content: space-between;
@@ -81,7 +81,7 @@
   .stat-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 28px 24px; }
   .stat-card .big { font-size: 42px; font-weight: 900; color: var(--green); letter-spacing: -2px; }
   .stat-card .desc { font-size: 14px; color: var(--muted); margin-top: 4px; }
-  .stat-card .vs { font-size: 12px; color: #475569; margin-top: 8px; background: var(--bg3); padding: 4px 10px; border-radius: 20px; display: inline-block; }
+  .stat-card .vs { font-size: 12px; color: #2a4a22; margin-top: 8px; background: var(--bg3); padding: 4px 10px; border-radius: 20px; display: inline-block; }
 
   /* PRODUCTS */
   .products-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 40px; }
@@ -144,11 +144,13 @@
   footer .logo { display: inline-block; margin-bottom: 8px; }
 
   /* HIDDEN for lang */
-  [data-ro] { display: none; }
-  body.ro [data-en] { display: none; }
-  body.ro [data-ro] { display: block; }
-  body.ro span[data-ro] { display: inline; }
-  body.ro span[data-en] { display: none; }
+  [data-ro] { display: none !important; }
+  body.ro [data-en] { display: none !important; }
+  body.ro [data-ro] { display: block !important; }
+  body.ro span[data-ro] { display: inline !important; }
+  body.ro span[data-en] { display: none !important; }
+  body.ro .vs[data-ro] { display: inline-block !important; }
+  body.ro .lang-btn.active { display: flex !important; }
 
   /* DIVIDER */
   .divider { height: 1px; background: var(--border); max-width: 1200px; margin: 0 auto; }
@@ -158,7 +160,7 @@
   .hamburger span { display: block; width: 22px; height: 2px; background: var(--text); border-radius: 2px; transition: all 0.3s; }
   .mobile-menu {
     display: none; position: fixed; top: 64px; left: 0; right: 0; bottom: 0;
-    background: rgba(10,10,10,0.98); z-index: 999; flex-direction: column;
+    background: rgba(242,247,238,0.99); z-index: 999; flex-direction: column;
     align-items: center; justify-content: center; gap: 32px;
   }
   .mobile-menu.open { display: flex; }
@@ -209,19 +211,30 @@
     .stats-grid { grid-template-columns: 1fr; }
     .lang-toggle { display: none; }
   }
+
+  /* ACTIVE NAV TAB */
+  .nav-links a { position: relative; padding-bottom: 4px; }
+  .nav-links a.active-page { color: var(--green) !important; }
+  .nav-links a.active-page::after {
+    content: ''; position: absolute; bottom: -4px; left: 0; right: 0;
+    height: 2px; background: var(--green); border-radius: 1px;
+  }
+  .mobile-menu a.active-page { color: var(--green) !important; }
 </style>
 </head>
 <body id="body">
-
 <!-- NAV -->
+
 <nav>
-  <div class="logo"><span>Sorghum</span></div>
+  <a href="index.html" class="logo" style="text-decoration:none;"><span>Sorghum</span></a>
   <ul class="nav-links">
-    <li><a href="#about"><span data-en>About</span><span data-ro>Despre</span></a></li>
-    <li><a href="#science"><span data-en>Science</span><span data-ro>Știință</span></a></li>
-    <li><a href="#products"><span data-en>Products</span><span data-ro>Produse</span></a></li>
-    <li><a href="#planner"><span data-en>For Farmers</span><span data-ro>Pentru Agricultori</span></a></li>
-    <li><a href="#contact"><span data-en>Contact</span><span data-ro>Contact</span></a></li>
+    <li><a href="index.html" style="color:var(--white)"><span data-en>About</span><span data-ro>Despre</span></a></li>
+    <li><a href="science.html"><span data-en>Science</span><span data-ro>Știință</span></a></li>
+    <li><a href="institute.html"><span data-en>Institute</span><span data-ro>Institut</span></a></li>
+    <li><a href="products.html"><span data-en>Products</span><span data-ro>Produse</span></a></li>
+    <li><a href="processing.html"><span data-en>Processing</span><span data-ro>Procesare</span></a></li>
+    <li><a href="farmers.html"><span data-en>For Farmers</span><span data-ro>Agricultori</span></a></li>
+    <li><a href="contact.html"><span data-en>Contact</span><span data-ro>Contact</span></a></li>
   </ul>
   <div style="display:flex; align-items:center; gap:12px;">
     <div class="lang-toggle">
@@ -234,20 +247,24 @@
   </div>
 </nav>
 
+
 <!-- MOBILE MENU -->
+
 <div class="mobile-menu" id="mobileMenu">
-  <a href="#about" onclick="closeMenu()"><span data-en>About</span><span data-ro>Despre</span></a>
-  <a href="#science" onclick="closeMenu()"><span data-en>Science</span><span data-ro>Știință</span></a>
-  <a href="#products" onclick="closeMenu()"><span data-en>Products</span><span data-ro>Produse</span></a>
-  <a href="#planner" onclick="closeMenu()"><span data-en>For Farmers</span><span data-ro>Pentru Agricultori</span></a>
-  <a href="#contact" onclick="closeMenu()"><span data-en>Contact</span><span data-ro>Contact</span></a>
+  <a href="index.html" onclick="closeMenu()"><span data-en>About</span><span data-ro>Despre</span></a>
+  <a href="science.html" onclick="closeMenu()"><span data-en>Science</span><span data-ro>Știință</span></a>
+  <a href="institute.html" onclick="closeMenu()"><span data-en>Institute</span><span data-ro>Institut</span></a>
+  <a href="products.html" onclick="closeMenu()"><span data-en>Products</span><span data-ro>Produse</span></a>
+  <a href="processing.html" onclick="closeMenu()"><span data-en>Processing</span><span data-ro>Procesare</span></a>
+  <a href="farmers.html" onclick="closeMenu()"><span data-en>For Farmers</span><span data-ro>Agricultori</span></a>
+  <a href="contact.html" onclick="closeMenu()"><span data-en>Contact</span><span data-ro>Contact</span></a>
   <div class="mobile-lang">
     <button class="lang-btn active" id="mbtn-en" onclick="setLang('en'); closeMenu()">EN</button>
     <button class="lang-btn" id="mbtn-ro" onclick="setLang('ro'); closeMenu()">RO</button>
   </div>
 </div>
 
-<!-- HERO -->
+
 <section id="hero">
   <div class="hero-video-bg">
     <video autoplay muted loop playsinline>
@@ -259,8 +276,8 @@
   <div class="section-label">Sorghum</div>
   <h1 data-en>The most efficient<br>crop on Earth.</h1>
   <h1 data-ro>Cultura cu cea mai<br>mare eficiență.</h1>
-  <p data-en style="margin-top:20px; font-size:18px; max-width:560px; color:#cbd5e1;">One plant. More biomass, more CO₂ absorbed, more bioethanol — with less water, on soil where nothing else can grow.</p>
-  <p data-ro style="margin-top:20px; font-size:18px; max-width:560px; color:#cbd5e1;">O singură plantă. Mai multă biomasă, mai mult CO₂ absorbit, mai mult bioetanol — cu mai puțină apă, pe soluri unde nimic altceva nu crește.</p>
+  <p data-en style="margin-top:20px; font-size:18px; max-width:560px; color:var(--muted);">One plant. More biomass, more CO₂ absorbed, more bioethanol — with less water, on soil where nothing else can grow.</p>
+  <p data-ro style="margin-top:20px; font-size:18px; max-width:560px; color:var(--muted);">O singură plantă. Mai multă biomasă, mai mult CO₂ absorbit, mai mult bioetanol — cu mai puțină apă, pe soluri unde nimic altceva nu crește.</p>
   <div class="hero-stat-row">
     <div class="hero-stat">
       <div class="num">3×</div>
@@ -323,254 +340,26 @@
       <div class="desc" data-ro>Toate hibridurile europene sunt convenționale. Certificat fără gluten, indice glicemic scăzut.</div>
     </div>
   </div>
-</section>
 
-<!-- SCIENCE -->
-<div class="divider"></div>
-<section id="science">
-  <div class="section-label" data-en>The Science</div>
-  <div class="section-label" data-ro>Știința</div>
-  <h2 data-en>Numbers that change everything.</h2>
-  <h2 data-ro>Cifre care schimbă totul.</h2>
-  <p data-en>Every number below comes from peer-reviewed field experiments conducted in Romania, published in a 425-page monograph co-authored by 30+ scientists.</p>
-  <p data-ro>Fiecare cifră de mai jos provine din experimente de câmp revizuite de specialiști, desfășurate în România, publicate într-o monografie de 425 de pagini.</p>
-
-  <div class="stats-grid" style="margin-top:40px;">
-    <div class="stat-card">
-      <div class="big">80–100</div>
-      <div class="desc" data-en>tonnes of green biomass per hectare</div>
-      <div class="desc" data-ro>tone de biomasă verde per hectar</div>
-      <div class="vs" data-en>vs. 35–45t for maize silage</div>
-      <div class="vs" data-ro>față de 35–45t pentru siloz de porumb</div>
-    </div>
-    <div class="stat-card">
-      <div class="big">50–55t</div>
-      <div class="desc" data-en>CO₂ absorbed per hectare per year</div>
-      <div class="desc" data-ro>CO₂ absorbit per hectar pe an</div>
-      <div class="vs" data-en>3× more than a deciduous forest</div>
-      <div class="vs" data-ro>de 3× mai mult decât o pădure de foioase</div>
-    </div>
-    <div class="stat-card">
-      <div class="big">9,157L</div>
-      <div class="desc" data-en>max bioethanol yield per hectare from stalks</div>
-      <div class="desc" data-ro>randament maxim de bioetanol per hectar din tulpini</div>
-      <div class="vs" data-en>2× more than maize</div>
-      <div class="vs" data-ro>de 2× mai mult decât porumbul</div>
-    </div>
-    <div class="stat-card">
-      <div class="big">10.6%</div>
-      <div class="desc" data-en>protein in grain (vs. 8.7% in maize)</div>
-      <div class="desc" data-ro>proteină în bob (față de 8,7% în porumb)</div>
-      <div class="vs" data-en>+ 22% more protein</div>
-      <div class="vs" data-ro>+ 22% mai multă proteină</div>
-    </div>
-    <div class="stat-card">
-      <div class="big">4×</div>
-      <div class="desc" data-en>antioxidant power of sorghum syrup vs. honey</div>
-      <div class="desc" data-ro>puterea antioxidantă a siropului față de miere</div>
-    </div>
-    <div class="stat-card">
-      <div class="big">13–17%</div>
-      <div class="desc" data-en>sugar content in sweet sorghum stalks — comparable to sugarcane</div>
-      <div class="desc" data-ro>conținut de zahăr în tulpinile de sorg dulce — comparabil cu trestia de zahăr</div>
+  <!-- CAMEL QUOTE -->
+  <div style="display:grid; grid-template-columns:auto 1fr; gap:32px; align-items:center; margin-top:48px; background:var(--bg2); border:1px solid var(--border); border-radius:16px; padding:32px;">
+    <img src="images/seminar_image8.png" alt="Camel - the sorghum of the plant kingdom" style="width:110px; opacity:0.85;">
+    <div>
+      <p data-en style="font-size:18px; font-style:italic; color:var(--text); max-width:100%;">"Sorghum is the camel of the plant kingdom."</p>
+      <p data-ro style="font-size:18px; font-style:italic; color:var(--text); max-width:100%;">"Sorgul este cămila regnului vegetal."</p>
+      <p data-en style="font-size:13px; margin-top:8px;">— Academician N.I. Vavilov, world-renowned botanist and geneticist</p>
+      <p data-ro style="font-size:13px; margin-top:8px;">— Academician N.I. Vavilov, botanist și genetician de renume mondial</p>
     </div>
   </div>
-</section>
 
-<!-- PRODUCTS -->
-<div class="divider"></div>
-<section id="products">
-  <div class="section-label" data-en>What You Can Make</div>
-  <div class="section-label" data-ro>Ce Poți Produce</div>
-  <h2 data-en>One plant. Endless products.</h2>
-  <h2 data-ro>O plantă. Produse nelimitate.</h2>
-  <p data-en>Every part of the sorghum plant has commercial value — from food and beverages to energy and soil improvement.</p>
-  <p data-ro>Fiecare parte a plantei de sorg are valoare comercială — de la alimente și băuturi la energie și îmbunătățirea solului.</p>
-
-  <div class="products-grid">
-    <div class="product-card">
-      <div class="product-icon">🧃</div>
-      <h3 data-en>Stalks → Beverages & Sweeteners</h3>
-      <h3 data-ro>Tulpini → Băuturi și Îndulcitori</h3>
-      <ul class="product-items">
-        <li data-en>Sorghum syrup (4× antioxidants vs. honey)</li>
-        <li data-ro>Sirop de sorg (antioxidanți de 4× față de miere)</li>
-        <li data-en>Natural honey substitute</li>
-        <li data-ro>Înlocuitor natural de miere</li>
-        <li data-en>Vinegar, beer, vodka</li>
-        <li data-ro>Oțet, bere, vodcă</li>
-        <li data-en>Organic sugars</li>
-        <li data-ro>Zaharuri organice</li>
-      </ul>
-    </div>
-    <div class="product-card">
-      <div class="product-icon">⚡</div>
-      <h3 data-en>Stalks → Energy</h3>
-      <h3 data-ro>Tulpini → Energie</h3>
-      <ul class="product-items">
-        <li data-en>Bioethanol (up to 9,157 L/ha)</li>
-        <li data-ro>Bioetanol (până la 9.157 L/ha)</li>
-        <li data-en>Biogas from bagasse</li>
-        <li data-ro>Biogaz din bagasă</li>
-        <li data-en>Biochar & bio-oil</li>
-        <li data-ro>Biochar și bio-ulei</li>
-        <li data-en>Industrial syngas</li>
-        <li data-ro>Gaz de sinteză industrial</li>
-      </ul>
-    </div>
-    <div class="product-card">
-      <div class="product-icon">🌾</div>
-      <h3 data-en>Grain → Food</h3>
-      <h3 data-ro>Boabe → Alimente</h3>
-      <ul class="product-items">
-        <li data-en>Gluten-free flour, bread, pasta</li>
-        <li data-ro>Făină fără gluten, pâine, paste</li>
-        <li data-en>Baby food & breakfast cereal</li>
-        <li data-ro>Alimente pentru bebeluși și cereale</li>
-        <li data-en>Starch & animal feed</li>
-        <li data-ro>Amidon și furaje</li>
-        <li data-en>Biscuits & health foods</li>
-        <li data-ro>Biscuiți și alimente sănătoase</li>
-      </ul>
-    </div>
-    <div class="product-card">
-      <div class="product-icon">🌍</div>
-      <h3 data-en>Roots → Soil & Carbon</h3>
-      <h3 data-ro>Rădăcini → Sol și Carbon</h3>
-      <ul class="product-items">
-        <li data-en>3–4t humus built per year</li>
-        <li data-ro>3–4t humus construit pe an</li>
-        <li data-en>CO₂ carbon credits (50–55t/ha)</li>
-        <li data-ro>Certificate de carbon CO₂ (50–55t/ha)</li>
-        <li data-en>+22% yield for next cotton crop</li>
-        <li data-ro>+22% randament pentru următoarea recoltă de bumbac</li>
-        <li data-en>+17% yield boost for soybean</li>
-        <li data-ro>+17% creștere a randamentului pentru soia</li>
-      </ul>
-    </div>
+  <!-- FIELD PHOTO -->
+  <div style="margin-top:32px; border-radius:16px; overflow:hidden; border:1px solid var(--border);">
+    <img src="images/prezentare_image5.jpeg" alt="Scientists measuring sorghum plant in the field" style="width:100%; height:420px; object-fit:cover; object-position:center 30%;">
   </div>
+
 </section>
-
-<!-- FARMERS / PLANNER -->
-<div class="divider"></div>
-<section id="planner">
-  <div class="section-label" data-en>For Farmers</div>
-  <div class="section-label" data-ro>Pentru Agricultori</div>
-  <h2 data-en>Interactive Crop Rotation Planner</h2>
-  <h2 data-ro>Planificator Interactiv de Rotație a Culturilor</h2>
-  <p data-en>Enter your farm details and get a tailored 3-year rotation plan with yield estimates, fertilization advice, and harvest timing — based on 11 years of Romanian field data.</p>
-  <p data-ro>Introduceți detaliile fermei și obțineți un plan de rotație pe 3 ani, cu estimări de randament, sfaturi de fertilizare și momentul optim de recoltare — bazat pe 11 ani de date de câmp din România.</p>
-
-  <div class="planner-box">
-    <div class="planner-grid">
-      <div>
-        <div class="form-group">
-          <label data-en>SOIL TYPE</label>
-          <label data-ro>TIP DE SOL</label>
-          <select id="soil">
-            <option value="sandy" data-en>Sandy / Light</option>
-            <option value="sandy" data-ro>Nisipos / Ușor</option>
-            <option value="loam" data-en>Loam / Mixed</option>
-            <option value="loam" data-ro>Lutos / Mixt</option>
-            <option value="clay" data-en>Clay / Heavy</option>
-            <option value="clay" data-ro>Argilos / Greu</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label data-en>PREVIOUS CROP</label>
-          <label data-ro>CULTURA ANTERIOARĂ</label>
-          <select id="prevCrop">
-            <option value="soybean">Soybean / Soia</option>
-            <option value="wheat">Winter Wheat / Grâu de toamnă</option>
-            <option value="barley">Barley / Orz</option>
-            <option value="maize">Maize / Porumb</option>
-            <option value="other">Other / Alta</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label data-en>FARM SIZE (hectares)</label>
-          <label data-ro>SUPRAFAȚA FERMEI (hectare)</label>
-          <input type="number" id="hectares" value="10" min="1" max="10000">
-        </div>
-        <div class="form-group">
-          <label data-en>GOAL</label>
-          <label data-ro>OBIECTIV</label>
-          <select id="goal">
-            <option value="biomass" data-en>Maximum Biomass / Animal Feed</option>
-            <option value="biomass" data-ro>Biomasă Maximă / Furaje</option>
-            <option value="ethanol" data-en>Bioethanol Production</option>
-            <option value="ethanol" data-ro>Producție de Bioetanol</option>
-            <option value="food" data-en>Food Grade Grain</option>
-            <option value="food" data-ro>Boabe pentru Consum Uman</option>
-            <option value="syrup" data-en>Sweet Sorghum / Syrup</option>
-            <option value="syrup" data-ro>Sorg Dulce / Sirop</option>
-          </select>
-        </div>
-        <button class="calc-btn" onclick="calculate()" data-en>Generate My Rotation Plan →</button>
-        <button class="calc-btn" onclick="calculate()" data-ro>Generează Planul Meu →</button>
-      </div>
-
-      <div class="planner-result" id="result">
-        <h3 data-en>📋 Your 3-Year Plan</h3>
-        <h3 data-ro>📋 Planul Tău pe 3 Ani</h3>
-        <div id="result-content">
-          <p style="color:#475569; font-size:14px;" data-en>Fill in your details and click Generate to see your personalized rotation plan.</p>
-          <p style="color:#475569; font-size:14px;" data-ro>Completați detaliile și faceți clic pe Generează pentru a vedea planul personalizat.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- CONTACT -->
-<div class="divider"></div>
-<section id="contact">
-  <div class="section-label" data-en>Contact</div>
-  <div class="section-label" data-ro>Contact</div>
-  <h2 data-en>Let's grow together.</h2>
-  <h2 data-ro>Să creștem împreună.</h2>
-  <p data-en>Whether you're a farmer, food company, investor, or researcher — we'd love to hear from you.</p>
-  <p data-ro>Fie că ești agricultor, companie alimentară, investitor sau cercetător — ne bucurăm să te auzim.</p>
-
-  <form class="contact-form" action="https://formspree.io/f/xpqebpar" method="POST" id="contact-form">
-    <div class="form-group">
-      <label data-en>I AM A...</label>
-      <label data-ro>SUNT UN/O...</label>
-      <select name="role">
-        <option>Farmer / Agricultor</option>
-        <option>Food Company / Companie Alimentară</option>
-        <option>Energy Company / Companie Energetică</option>
-        <option>Investor / Investitor</option>
-        <option>Researcher / Cercetător</option>
-        <option>Other / Altul</option>
-      </select>
-    </div>
-    <input type="text" name="name" placeholder="Name / Nume" required>
-    <input type="email" name="email" placeholder="Email" required>
-    <textarea name="message" placeholder="Message / Mesaj" required></textarea>
-    <div id="form-success" style="display:none; color:var(--green); font-weight:700; margin-bottom:12px;">
-      <span data-en>✅ Message sent! We'll be in touch soon.</span>
-      <span data-ro>✅ Mesaj trimis! Vă vom contacta în curând.</span>
-    </div>
-    <button type="submit" class="calc-btn" data-en>Send Message →</button>
-    <button type="submit" class="calc-btn" data-ro>Trimite Mesaj →</button>
-  </form>
-  <script>
-    document.getElementById('contact-form').addEventListener('submit', function(e) {
-      e.preventDefault();
-      var form = this;
-      fetch(form.action, { method: 'POST', body: new FormData(form), headers: { 'Accept': 'application/json' } })
-        .then(function(r) {
-          if (r.ok) {
-            document.getElementById('form-success').style.display = 'block';
-            form.reset();
-          }
-        });
-    });
-  </script>
-</section>
-
 <!-- FOOTER -->
+
 <footer>
   <div class="logo"><span style="color:var(--green)">Sorghum</span></div>
   <p style="margin-top:8px;" data-en>Moldova's breakthrough sorghum — proven by science, grown for the future.</p>
@@ -680,6 +469,51 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
     document.querySelector(a.getAttribute('href')).scrollIntoView({ behavior: 'smooth' });
   });
 });
+</script>
+
+<script>
+
+function toggleMenu() {
+  const menu = document.getElementById('mobileMenu');
+  menu.classList.toggle('open');
+}
+function closeMenu() {
+  document.getElementById('mobileMenu').classList.remove('open');
+}
+function setLang(lang) {
+  const body = document.getElementById('body');
+  if (lang === 'ro') {
+    body.classList.add('ro');
+    ['btn-ro','mbtn-ro'].forEach(id => document.getElementById(id)?.classList.add('active'));
+    ['btn-en','mbtn-en'].forEach(id => document.getElementById(id)?.classList.remove('active'));
+  } else {
+    body.classList.remove('ro');
+    ['btn-en','mbtn-en'].forEach(id => document.getElementById(id)?.classList.add('active'));
+    ['btn-ro','mbtn-ro'].forEach(id => document.getElementById(id)?.classList.remove('active'));
+  }
+  localStorage.setItem('sorglang', lang);
+}
+
+// Active nav tab + restore language on load
+(function() {
+  // Restore language
+  const saved = localStorage.getItem('sorglang');
+  if (saved) setLang(saved);
+
+  // Mark active nav link
+  const page = window.location.pathname.split('/').pop() || 'index.html';
+  document.querySelectorAll('.nav-links a, .mobile-menu a').forEach(a => {
+    if (a.getAttribute('href') === page) a.classList.add('active-page');
+  });
+})();
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const target = document.querySelector(a.getAttribute('href'));
+    if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth' }); }
+  });
+});
+
+
 </script>
 </body>
 </html>
