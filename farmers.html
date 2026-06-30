@@ -234,7 +234,7 @@
     <li><a href="institute.html"><span data-en>Institute</span><span data-ro>Institut</span></a></li>
     <li><a href="products.html"><span data-en>Products</span><span data-ro>Produse</span></a></li>
     <li><a href="farmers.html" style="color:var(--white)"><span data-en>For Farmers</span><span data-ro>Pentru Agricultori</span></a></li>
-    <li><a href="contact.html"><span data-en>Contact</span><span data-ro>Contact</span></a></li>
+    <li><a href="contact.html"><span data-en>Contacts</span><span data-ro>Contacte</span></a></li>
   </ul>
   <div style="display:flex; align-items:center; gap:12px;">
     <div class="lang-toggle">
@@ -257,7 +257,7 @@
   <a href="products.html" onclick="closeMenu()"><span data-en>Products</span><span data-ro>Produse</span></a>
   <a href="processing.html" onclick="closeMenu()"><span data-en>Processing</span><span data-ro>Procesare</span></a>
   <a href="farmers.html" onclick="closeMenu()"><span data-en>For Farmers</span><span data-ro>Agricultori</span></a>
-  <a href="contact.html" onclick="closeMenu()"><span data-en>Contact</span><span data-ro>Contact</span></a>
+  <a href="contact.html" onclick="closeMenu()"><span data-en>Contacts</span><span data-ro>Contacte</span></a>
   <div class="mobile-lang">
     <button class="lang-btn active" id="mbtn-en" onclick="setLang('en'); closeMenu()">EN</button>
     <button class="lang-btn" id="mbtn-ro" onclick="setLang('ro'); closeMenu()">RO</button>
@@ -449,7 +449,7 @@
 
   <!-- Field photo -->
   <div style="margin-top:32px; border-radius:12px; overflow:hidden; border:1px solid var(--border);">
-    <img src="images/field_harvest_image1.jpg" alt="Sorghum harvest field" style="width:100%; max-height:340px; object-fit:cover; display:block; cursor:pointer;" onclick="openLightbox(this)">
+    <img src="images/soriz_image8.jpeg" alt="Research team measuring sorghum plant height in the field" style="width:100%; max-height:420px; object-fit:cover; object-position:center top; display:block; cursor:pointer;" onclick="openLightbox(this)">
   </div>
 
   <!-- Herbicide video -->
@@ -551,7 +551,11 @@ function calculate() {
   const isRo = document.getElementById('body').classList.contains('ro');
 
   // Yield estimates by soil
-  const yields = { sandy: { biomass: 72, ethanol: 5800, grain: 3.8 }, loam: { biomass: 90, ethanol: 7500, grain: 5.2 }, clay: { biomass: 82, ethanol: 6800, grain: 4.5 } };
+  const yields = {
+    sandy: { biomass: 72, ethanol: 5800, grain: 3.8, syrup: 3600 },
+    loam:  { biomass: 90, ethanol: 7500, grain: 5.2, syrup: 4500 },
+    clay:  { biomass: 82, ethanol: 6800, grain: 4.5, syrup: 4100 }
+  };
   const y = yields[soil];
 
   // Bonus for previous crop
@@ -559,11 +563,20 @@ function calculate() {
   const bonus = prevBonus[prev];
 
   // Primary yield
-  let primaryYield, primaryUnit, primaryLabel, primaryLabelRo;
+  let primaryYield, primaryUnit, primaryLabel, primaryLabelRo, secondaryLine = '';
   if (goal === 'biomass') { primaryYield = (y.biomass * bonus).toFixed(1); primaryUnit = 't/ha'; primaryLabel = 'Green Biomass Yield'; primaryLabelRo = 'Randament Biomasă Verde'; }
   else if (goal === 'ethanol') { primaryYield = Math.round(y.ethanol * bonus); primaryUnit = 'L/ha'; primaryLabel = 'Bioethanol Yield'; primaryLabelRo = 'Randament Bioetanol'; }
   else if (goal === 'food') { primaryYield = (y.grain * bonus).toFixed(1); primaryUnit = 't/ha'; primaryLabel = 'Grain Yield'; primaryLabelRo = 'Randament Boabe'; }
-  else { primaryYield = (y.biomass * 0.6 * bonus).toFixed(1); primaryUnit = 't/ha'; primaryLabel = 'Sweet Stalk Yield'; primaryLabelRo = 'Randament Tulpini Dulci'; }
+  else {
+    primaryYield = Math.round(y.syrup * bonus);
+    primaryUnit = 'L/ha';
+    primaryLabel = 'Sweet Syrup Yield';
+    primaryLabelRo = 'Randament Sirop Dulce';
+    const sugarKg = Math.round(primaryYield * 1.33 * 0.75);
+    secondaryLine = isRo
+      ? `<div class="result-row"><span>Zahăr echivalent</span><span class="val">${sugarKg} kg/ha</span></div>`
+      : `<div class="result-row"><span>Sugar equivalent</span><span class="val">${sugarKg} kg/ha</span></div>`;
+  }
 
   const totalYield = (parseFloat(primaryYield) * ha).toFixed(0);
   const nitrogenRec = goal === 'syrup' ? '60–80 kg N/ha' : '80–120 kg N/ha';
@@ -589,8 +602,13 @@ function calculate() {
 
   const co2Total = (50 * ha).toFixed(0);
 
+  const disclaimer = isRo
+    ? `<p style="font-size:11px; color:var(--muted); margin-top:16px; border-top:1px solid var(--border); padding-top:12px;">* Estimări bazate pe studii de câmp moldovenești pe 11 ani (monografie 425 pag., 2021). Randamentul real variază în funcție de climă locală, precipitații și nivelul de input-uri.</p>`
+    : `<p style="font-size:11px; color:var(--muted); margin-top:16px; border-top:1px solid var(--border); padding-top:12px;">* Estimates based on 11-year Moldovan field trials (425-page monograph, 2021). Actual yield varies with local climate, rainfall, and input levels.</p>`;
+
   document.getElementById('result-content').innerHTML = `
     <div class="result-row"><span>${t.yieldLabel}</span><span class="val">${primaryYield} ${primaryUnit}</span></div>
+    ${secondaryLine}
     <div class="result-row"><span>${t.totalLabel} (${ha} ha)</span><span class="val">${totalYield} ${primaryUnit.replace('/ha','')}</span></div>
     <div class="result-row"><span>${t.nLabel}</span><span class="val">${nitrogenRec}</span></div>
     <div class="result-row"><span>${t.harvestLabel}</span><span class="val">${harvestTiming}</span></div>
@@ -612,6 +630,7 @@ function calculate() {
         <span class="rotation-note">${t.yr3note}</span>
       </div>
     </div>
+    ${disclaimer}
   `;
 }
 
@@ -644,19 +663,27 @@ function setLang(lang) {
     ['btn-en','mbtn-en'].forEach(id => document.getElementById(id)?.classList.add('active'));
     ['btn-ro','mbtn-ro'].forEach(id => document.getElementById(id)?.classList.remove('active'));
   }
-  localStorage.setItem('sorglang', lang);
+  try { localStorage.setItem('sorglang', lang); } catch(e) {}
+  // Carry language in nav links so it persists on file:// across pages
+  document.querySelectorAll('a[href]').forEach(function(a) {
+    var h = a.getAttribute('href');
+    if (h && /^[^#?]*\.html(\?.*)?$/.test(h)) {
+      var base = h.replace(/\?.*$/, '');
+      a.setAttribute('href', base + (lang === 'ro' ? '?lang=ro' : ''));
+    }
+  });
 }
 
 // Active nav tab + restore language on load
 (function() {
   // Restore language
-  const saved = localStorage.getItem('sorglang');
+  const saved = new URLSearchParams(location.search).get('lang') || localStorage.getItem('sorglang');
   if (saved) setLang(saved);
 
   // Mark active nav link
   const page = window.location.pathname.split('/').pop() || 'index.html';
   document.querySelectorAll('.nav-links a, .mobile-menu a').forEach(a => {
-    if (a.getAttribute('href') === page) a.classList.add('active-page');
+    if (a.getAttribute('href').split('?')[0] === page) a.classList.add('active-page');
   });
 })();
 document.querySelectorAll('a[href^="#"]').forEach(a => {
@@ -674,7 +701,11 @@ function calculate() {
   const isRo = document.getElementById('body').classList.contains('ro');
 
   // Yield estimates by soil
-  const yields = { sandy: { biomass: 72, ethanol: 5800, grain: 3.8 }, loam: { biomass: 90, ethanol: 7500, grain: 5.2 }, clay: { biomass: 82, ethanol: 6800, grain: 4.5 } };
+  const yields = {
+    sandy: { biomass: 72, ethanol: 5800, grain: 3.8, syrup: 3600 },
+    loam:  { biomass: 90, ethanol: 7500, grain: 5.2, syrup: 4500 },
+    clay:  { biomass: 82, ethanol: 6800, grain: 4.5, syrup: 4100 }
+  };
   const y = yields[soil];
 
   // Bonus for previous crop
@@ -682,11 +713,20 @@ function calculate() {
   const bonus = prevBonus[prev];
 
   // Primary yield
-  let primaryYield, primaryUnit, primaryLabel, primaryLabelRo;
+  let primaryYield, primaryUnit, primaryLabel, primaryLabelRo, secondaryLine = '';
   if (goal === 'biomass') { primaryYield = (y.biomass * bonus).toFixed(1); primaryUnit = 't/ha'; primaryLabel = 'Green Biomass Yield'; primaryLabelRo = 'Randament Biomasă Verde'; }
   else if (goal === 'ethanol') { primaryYield = Math.round(y.ethanol * bonus); primaryUnit = 'L/ha'; primaryLabel = 'Bioethanol Yield'; primaryLabelRo = 'Randament Bioetanol'; }
   else if (goal === 'food') { primaryYield = (y.grain * bonus).toFixed(1); primaryUnit = 't/ha'; primaryLabel = 'Grain Yield'; primaryLabelRo = 'Randament Boabe'; }
-  else { primaryYield = (y.biomass * 0.6 * bonus).toFixed(1); primaryUnit = 't/ha'; primaryLabel = 'Sweet Stalk Yield'; primaryLabelRo = 'Randament Tulpini Dulci'; }
+  else {
+    primaryYield = Math.round(y.syrup * bonus);
+    primaryUnit = 'L/ha';
+    primaryLabel = 'Sweet Syrup Yield';
+    primaryLabelRo = 'Randament Sirop Dulce';
+    const sugarKg = Math.round(primaryYield * 1.33 * 0.75);
+    secondaryLine = isRo
+      ? `<div class="result-row"><span>Zahăr echivalent</span><span class="val">${sugarKg} kg/ha</span></div>`
+      : `<div class="result-row"><span>Sugar equivalent</span><span class="val">${sugarKg} kg/ha</span></div>`;
+  }
 
   const totalYield = (parseFloat(primaryYield) * ha).toFixed(0);
   const nitrogenRec = goal === 'syrup' ? '60–80 kg N/ha' : '80–120 kg N/ha';
@@ -712,8 +752,13 @@ function calculate() {
 
   const co2Total = (50 * ha).toFixed(0);
 
+  const disclaimer = isRo
+    ? `<p style="font-size:11px; color:var(--muted); margin-top:16px; border-top:1px solid var(--border); padding-top:12px;">* Estimări bazate pe studii de câmp moldovenești pe 11 ani (monografie 425 pag., 2021). Randamentul real variază în funcție de climă locală, precipitații și nivelul de input-uri.</p>`
+    : `<p style="font-size:11px; color:var(--muted); margin-top:16px; border-top:1px solid var(--border); padding-top:12px;">* Estimates based on 11-year Moldovan field trials (425-page monograph, 2021). Actual yield varies with local climate, rainfall, and input levels.</p>`;
+
   document.getElementById('result-content').innerHTML = `
     <div class="result-row"><span>${t.yieldLabel}</span><span class="val">${primaryYield} ${primaryUnit}</span></div>
+    ${secondaryLine}
     <div class="result-row"><span>${t.totalLabel} (${ha} ha)</span><span class="val">${totalYield} ${primaryUnit.replace('/ha','')}</span></div>
     <div class="result-row"><span>${t.nLabel}</span><span class="val">${nitrogenRec}</span></div>
     <div class="result-row"><span>${t.harvestLabel}</span><span class="val">${harvestTiming}</span></div>
@@ -735,6 +780,7 @@ function calculate() {
         <span class="rotation-note">${t.yr3note}</span>
       </div>
     </div>
+    ${disclaimer}
   `;
 }
 </script>

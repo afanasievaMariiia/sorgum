@@ -289,7 +289,7 @@
     <li><a href="products.html" style="color:var(--white)"><span data-en>Products</span><span data-ro>Produse</span></a></li>
     <li><a href="processing.html"><span data-en>Processing</span><span data-ro>Procesare</span></a></li>
     <li><a href="farmers.html"><span data-en>For Farmers</span><span data-ro>Agricultori</span></a></li>
-    <li><a href="contact.html"><span data-en>Contact</span><span data-ro>Contact</span></a></li>
+    <li><a href="contact.html"><span data-en>Contacts</span><span data-ro>Contacte</span></a></li>
   </ul>
   <div style="display:flex; align-items:center; gap:12px;">
     <div class="lang-toggle">
@@ -312,7 +312,7 @@
   <a href="products.html" onclick="closeMenu()"><span data-en>Products</span><span data-ro>Produse</span></a>
   <a href="processing.html" onclick="closeMenu()"><span data-en>Processing</span><span data-ro>Procesare</span></a>
   <a href="farmers.html" onclick="closeMenu()"><span data-en>For Farmers</span><span data-ro>Agricultori</span></a>
-  <a href="contact.html" onclick="closeMenu()"><span data-en>Contact</span><span data-ro>Contact</span></a>
+  <a href="contact.html" onclick="closeMenu()"><span data-en>Contacts</span><span data-ro>Contacte</span></a>
   <div class="mobile-lang">
     <button class="lang-btn active" id="mbtn-en" onclick="setLang('en'); closeMenu()">EN</button>
     <button class="lang-btn" id="mbtn-ro" onclick="setLang('ro'); closeMenu()">RO</button>
@@ -854,19 +854,27 @@ function setLang(lang) {
     ['btn-en','mbtn-en'].forEach(id => document.getElementById(id)?.classList.add('active'));
     ['btn-ro','mbtn-ro'].forEach(id => document.getElementById(id)?.classList.remove('active'));
   }
-  localStorage.setItem('sorglang', lang);
+  try { localStorage.setItem('sorglang', lang); } catch(e) {}
+  // Carry language in nav links so it persists on file:// across pages
+  document.querySelectorAll('a[href]').forEach(function(a) {
+    var h = a.getAttribute('href');
+    if (h && /^[^#?]*\.html(\?.*)?$/.test(h)) {
+      var base = h.replace(/\?.*$/, '');
+      a.setAttribute('href', base + (lang === 'ro' ? '?lang=ro' : ''));
+    }
+  });
 }
 
 // Active nav tab + restore language on load
 (function() {
   // Restore language
-  const saved = localStorage.getItem('sorglang');
+  const saved = new URLSearchParams(location.search).get('lang') || localStorage.getItem('sorglang');
   if (saved) setLang(saved);
 
   // Mark active nav link
   const page = window.location.pathname.split('/').pop() || 'index.html';
   document.querySelectorAll('.nav-links a, .mobile-menu a').forEach(a => {
-    if (a.getAttribute('href') === page) a.classList.add('active-page');
+    if (a.getAttribute('href').split('?')[0] === page) a.classList.add('active-page');
   });
 })();
 document.querySelectorAll('a[href^="#"]').forEach(a => {

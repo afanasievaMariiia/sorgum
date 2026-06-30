@@ -235,7 +235,7 @@
     <li><a href="products.html"><span data-en>Products</span><span data-ro>Produse</span></a></li>
     <li><a href="processing.html"><span data-en>Processing</span><span data-ro>Procesare</span></a></li>
     <li><a href="farmers.html"><span data-en>For Farmers</span><span data-ro>Agricultori</span></a></li>
-    <li><a href="contact.html"><span data-en>Contact</span><span data-ro>Contact</span></a></li>
+    <li><a href="contact.html"><span data-en>Contacts</span><span data-ro>Contacte</span></a></li>
   </ul>
   <div style="display:flex; align-items:center; gap:12px;">
     <div class="lang-toggle">
@@ -258,7 +258,7 @@
   <a href="products.html" onclick="closeMenu()"><span data-en>Products</span><span data-ro>Produse</span></a>
   <a href="processing.html" onclick="closeMenu()"><span data-en>Processing</span><span data-ro>Procesare</span></a>
   <a href="farmers.html" onclick="closeMenu()"><span data-en>For Farmers</span><span data-ro>Agricultori</span></a>
-  <a href="contact.html" onclick="closeMenu()"><span data-en>Contact</span><span data-ro>Contact</span></a>
+  <a href="contact.html" onclick="closeMenu()"><span data-en>Contacts</span><span data-ro>Contacte</span></a>
   <div class="mobile-lang">
     <button class="lang-btn active" id="mbtn-en" onclick="setLang('en'); closeMenu()">EN</button>
     <button class="lang-btn" id="mbtn-ro" onclick="setLang('ro'); closeMenu()">RO</button>
@@ -359,6 +359,77 @@
   </div>
 
 </section>
+
+<!-- CROP PLANNER -->
+<section id="planner" style="padding: 80px 0;">
+  <div class="container">
+    <h2 data-en style="text-align:center; font-size:clamp(22px,4vw,36px); margin-bottom:8px;">🌾 Crop Planner</h2>
+    <h2 data-ro style="text-align:center; font-size:clamp(22px,4vw,36px); margin-bottom:8px;">🌾 Planificator Agricol</h2>
+    <p data-en style="text-align:center; color:var(--muted); margin-bottom:32px;">Enter your farm conditions and get a tailored yield forecast + 3-year rotation plan.</p>
+    <p data-ro style="text-align:center; color:var(--muted); margin-bottom:32px;">Introduceți condițiile fermei și obțineți o prognoză personalizată + plan de rotație pe 3 ani.</p>
+
+    <div class="planner-box">
+      <div class="planner-grid">
+        <!-- LEFT: INPUTS -->
+        <div>
+          <div style="margin-bottom:18px;">
+            <label data-en style="display:block; font-weight:700; margin-bottom:6px; color:var(--muted); font-size:13px; text-transform:uppercase; letter-spacing:.05em;">Soil Type</label>
+            <label data-ro style="display:block; font-weight:700; margin-bottom:6px; color:var(--muted); font-size:13px; text-transform:uppercase; letter-spacing:.05em;">Tipul Solului</label>
+            <select id="soil" style="width:100%; background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:12px; color:var(--fg); font-size:15px;">
+              <option value="loam" data-en-text="Loam (optimal)" data-ro-text="Lutos (optim)">Loam (optimal)</option>
+              <option value="sandy" data-en-text="Sandy" data-ro-text="Nisipos">Sandy</option>
+              <option value="clay" data-en-text="Clay" data-ro-text="Argilos">Clay</option>
+            </select>
+          </div>
+
+          <div style="margin-bottom:18px;">
+            <label data-en style="display:block; font-weight:700; margin-bottom:6px; color:var(--muted); font-size:13px; text-transform:uppercase; letter-spacing:.05em;">Previous Crop</label>
+            <label data-ro style="display:block; font-weight:700; margin-bottom:6px; color:var(--muted); font-size:13px; text-transform:uppercase; letter-spacing:.05em;">Cultura Anterioară</label>
+            <select id="prevCrop" style="width:100%; background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:12px; color:var(--fg); font-size:15px;">
+              <option value="soybean" data-en-text="Soybean (+15% N bonus)" data-ro-text="Soia (+15% bonus N)">Soybean (+15% N bonus)</option>
+              <option value="wheat" data-en-text="Wheat (+8%)" data-ro-text="Grâu (+8%)">Wheat (+8%)</option>
+              <option value="barley" data-en-text="Barley (+6%)" data-ro-text="Orz (+6%)">Barley (+6%)</option>
+              <option value="maize" data-en-text="Maize (−5%)" data-ro-text="Porumb (−5%)">Maize (−5%)</option>
+              <option value="other" data-en-text="Other" data-ro-text="Alta">Other</option>
+            </select>
+          </div>
+
+          <div style="margin-bottom:18px;">
+            <label data-en style="display:block; font-weight:700; margin-bottom:6px; color:var(--muted); font-size:13px; text-transform:uppercase; letter-spacing:.05em;">Farm Size (hectares)</label>
+            <label data-ro style="display:block; font-weight:700; margin-bottom:6px; color:var(--muted); font-size:13px; text-transform:uppercase; letter-spacing:.05em;">Suprafața (hectare)</label>
+            <input id="hectares" type="number" min="1" value="10" style="width:100%; background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:12px; color:var(--fg); font-size:15px; box-sizing:border-box;">
+          </div>
+
+          <div style="margin-bottom:24px;">
+            <label data-en style="display:block; font-weight:700; margin-bottom:6px; color:var(--muted); font-size:13px; text-transform:uppercase; letter-spacing:.05em;">Farming Goal</label>
+            <label data-ro style="display:block; font-weight:700; margin-bottom:6px; color:var(--muted); font-size:13px; text-transform:uppercase; letter-spacing:.05em;">Obiectiv Agricol</label>
+            <select id="goal" style="width:100%; background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:12px; color:var(--fg); font-size:15px;">
+              <option value="biomass" data-en-text="Biomass / Silage" data-ro-text="Biomasă / Siloz">Biomass / Silage</option>
+              <option value="ethanol" data-en-text="Bioethanol" data-ro-text="Bioetanol">Bioethanol</option>
+              <option value="food" data-en-text="Food Grain" data-ro-text="Boabe Alimentare">Food Grain</option>
+              <option value="syrup" data-en-text="Sweet Syrup / Sugar" data-ro-text="Sirop Dulce / Zahăr">Sweet Syrup / Sugar</option>
+            </select>
+          </div>
+
+          <button class="calc-btn" onclick="calculate()">
+            <span data-en>Calculate My Yield →</span>
+            <span data-ro>Calculează Randamentul →</span>
+          </button>
+        </div>
+
+        <!-- RIGHT: RESULTS -->
+        <div class="planner-result">
+          <h3><span data-en>Your Yield Forecast</span><span data-ro>Prognoza Ta de Randament</span></h3>
+          <div id="result-content" style="color:var(--muted); font-size:14px; margin-top:8px;">
+            <p data-en>Fill in the form and click <strong>Calculate</strong> to see your personalized results.</p>
+            <p data-ro>Completați formularul și apăsați <strong>Calculează</strong> pentru rezultate personalizate.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- FOOTER -->
 
 <footer>
@@ -378,19 +449,6 @@ function closeMenu() {
   document.getElementById('mobileMenu').classList.remove('open');
 }
 
-function setLang(lang) {
-  const body = document.getElementById('body');
-  if (lang === 'ro') {
-    body.classList.add('ro');
-    ['btn-ro','mbtn-ro'].forEach(id => document.getElementById(id)?.classList.add('active'));
-    ['btn-en','mbtn-en'].forEach(id => document.getElementById(id)?.classList.remove('active'));
-  } else {
-    body.classList.remove('ro');
-    ['btn-en','mbtn-en'].forEach(id => document.getElementById(id)?.classList.add('active'));
-    ['btn-ro','mbtn-ro'].forEach(id => document.getElementById(id)?.classList.remove('active'));
-  }
-}
-
 function calculate() {
   const soil = document.getElementById('soil').value;
   const prev = document.getElementById('prevCrop').value;
@@ -399,7 +457,15 @@ function calculate() {
   const isRo = document.getElementById('body').classList.contains('ro');
 
   // Yield estimates by soil
-  const yields = { sandy: { biomass: 72, ethanol: 5800, grain: 3.8 }, loam: { biomass: 90, ethanol: 7500, grain: 5.2 }, clay: { biomass: 82, ethanol: 6800, grain: 4.5 } };
+  // biomass: t/ha green biomass (monograph: 80–100 t/ha)
+  // ethanol: L/ha bioethanol (monograph: 4,152–9,157 L/ha)
+  // grain: t/ha grain (typical sorghum range 3–6 t/ha)
+  // syrup: L/ha finished syrup — stalk (65% biomass) × 55% juice extraction × 15 Brix × concentrate to 75 Brix × 0.70 real-world efficiency
+  const yields = {
+    sandy: { biomass: 72, ethanol: 5800, grain: 3.8, syrup: 3600 },
+    loam:  { biomass: 90, ethanol: 7500, grain: 5.2, syrup: 4500 },
+    clay:  { biomass: 82, ethanol: 6800, grain: 4.5, syrup: 4100 }
+  };
   const y = yields[soil];
 
   // Bonus for previous crop
@@ -407,11 +473,21 @@ function calculate() {
   const bonus = prevBonus[prev];
 
   // Primary yield
-  let primaryYield, primaryUnit, primaryLabel, primaryLabelRo;
+  let primaryYield, primaryUnit, primaryLabel, primaryLabelRo, secondaryLine = '';
   if (goal === 'biomass') { primaryYield = (y.biomass * bonus).toFixed(1); primaryUnit = 't/ha'; primaryLabel = 'Green Biomass Yield'; primaryLabelRo = 'Randament Biomasă Verde'; }
   else if (goal === 'ethanol') { primaryYield = Math.round(y.ethanol * bonus); primaryUnit = 'L/ha'; primaryLabel = 'Bioethanol Yield'; primaryLabelRo = 'Randament Bioetanol'; }
   else if (goal === 'food') { primaryYield = (y.grain * bonus).toFixed(1); primaryUnit = 't/ha'; primaryLabel = 'Grain Yield'; primaryLabelRo = 'Randament Boabe'; }
-  else { primaryYield = (y.biomass * 0.6 * bonus).toFixed(1); primaryUnit = 't/ha'; primaryLabel = 'Sweet Stalk Yield'; primaryLabelRo = 'Randament Tulpini Dulci'; }
+  else {
+    // Syrup: L/ha finished syrup; secondary = kg sugar (juice_liters × Brix 0.15)
+    primaryYield = Math.round(y.syrup * bonus);
+    primaryUnit = 'L/ha';
+    primaryLabel = 'Sweet Syrup Yield';
+    primaryLabelRo = 'Randament Sirop Dulce';
+    const sugarKg = Math.round(primaryYield * 1.33 * 0.75); // 1L syrup @ 75 Brix, density 1.33 kg/L → ~1 kg sugar/L
+    secondaryLine = isRo
+      ? `<div class="result-row"><span>Zahăr echivalent</span><span class="val">${sugarKg} kg/ha</span></div>`
+      : `<div class="result-row"><span>Sugar equivalent</span><span class="val">${sugarKg} kg/ha</span></div>`;
+  }
 
   const totalYield = (parseFloat(primaryYield) * ha).toFixed(0);
   const nitrogenRec = goal === 'syrup' ? '60–80 kg N/ha' : '80–120 kg N/ha';
@@ -437,8 +513,13 @@ function calculate() {
 
   const co2Total = (50 * ha).toFixed(0);
 
+  const disclaimer = isRo
+    ? `<p style="font-size:11px; color:var(--muted); margin-top:16px; border-top:1px solid var(--border); padding-top:12px;">* Estimări bazate pe studii de câmp moldovenești pe 11 ani (monografie 425 pag., 2021). Randamentul real variază în funcție de climă locală, precipitații și nivelul de input-uri.</p>`
+    : `<p style="font-size:11px; color:var(--muted); margin-top:16px; border-top:1px solid var(--border); padding-top:12px;">* Estimates based on 11-year Moldovan field trials (425-page monograph, 2021). Actual yield varies with local climate, rainfall, and input levels.</p>`;
+
   document.getElementById('result-content').innerHTML = `
     <div class="result-row"><span>${t.yieldLabel}</span><span class="val">${primaryYield} ${primaryUnit}</span></div>
+    ${secondaryLine}
     <div class="result-row"><span>${t.totalLabel} (${ha} ha)</span><span class="val">${totalYield} ${primaryUnit.replace('/ha','')}</span></div>
     <div class="result-row"><span>${t.nLabel}</span><span class="val">${nitrogenRec}</span></div>
     <div class="result-row"><span>${t.harvestLabel}</span><span class="val">${harvestTiming}</span></div>
@@ -460,6 +541,7 @@ function calculate() {
         <span class="rotation-note">${t.yr3note}</span>
       </div>
     </div>
+    ${disclaimer}
   `;
 }
 
@@ -481,6 +563,13 @@ function toggleMenu() {
 function closeMenu() {
   document.getElementById('mobileMenu').classList.remove('open');
 }
+function updateSelectLabels(lang) {
+  document.querySelectorAll('#soil option, #prevCrop option, #goal option').forEach(opt => {
+    const text = opt.getAttribute('data-' + lang + '-text');
+    if (text) opt.textContent = text;
+  });
+}
+
 function setLang(lang) {
   const body = document.getElementById('body');
   if (lang === 'ro') {
@@ -492,19 +581,29 @@ function setLang(lang) {
     ['btn-en','mbtn-en'].forEach(id => document.getElementById(id)?.classList.add('active'));
     ['btn-ro','mbtn-ro'].forEach(id => document.getElementById(id)?.classList.remove('active'));
   }
-  localStorage.setItem('sorglang', lang);
+  updateSelectLabels(lang);
+  try { localStorage.setItem('sorglang', lang); } catch(e) {}
+  // Carry language in nav links so it persists on file:// across pages
+  document.querySelectorAll('a[href]').forEach(function(a) {
+    var h = a.getAttribute('href');
+    if (h && /^[^#?]*\.html(\?.*)?$/.test(h)) {
+      var base = h.replace(/\?.*$/, '');
+      a.setAttribute('href', base + (lang === 'ro' ? '?lang=ro' : ''));
+    }
+  });
 }
 
 // Active nav tab + restore language on load
 (function() {
   // Restore language
-  const saved = localStorage.getItem('sorglang');
+  const saved = new URLSearchParams(location.search).get('lang') || localStorage.getItem('sorglang');
   if (saved) setLang(saved);
+  else updateSelectLabels('en');
 
   // Mark active nav link
   const page = window.location.pathname.split('/').pop() || 'index.html';
   document.querySelectorAll('.nav-links a, .mobile-menu a').forEach(a => {
-    if (a.getAttribute('href') === page) a.classList.add('active-page');
+    if (a.getAttribute('href').split('?')[0] === page) a.classList.add('active-page');
   });
 })();
 document.querySelectorAll('a[href^="#"]').forEach(a => {
